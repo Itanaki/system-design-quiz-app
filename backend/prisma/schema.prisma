@@ -1,0 +1,41 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model Question {
+    id          String  @id @default(cuid())
+    prompt      String
+    options     Json
+    correctAnswer String
+    explanation String?
+    difficulty  String
+    topics      String[]
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    AttemptAnswer AttemptAnswer[]
+}
+
+model QuizAttempt {
+    id      String      @id @default(cuid())
+    userId  String?
+    score   Int
+    total   Int
+    createdAt   DateTime @default(now())
+    answers AttemptAnswer[]
+}
+
+model AttemptAnswer {
+    id      String  @id @default(cuid())
+    attemptId   String
+    questionId  String
+    selected    String
+    correct     Boolean
+    attempt     QuizAttempt @relation(fields: [attemptId], references: [id])
+    question    Question?   @relation(fields: [questionId], references: [id])
+    @@index([attemptId])
+    @@index([questionId])
+}
