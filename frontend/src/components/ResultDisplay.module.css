@@ -1,0 +1,190 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+  background: var(--code-bg);
+  border-radius: 8px;
+  border: 2px solid var(--accent-border);
+}
+
+.scoreCard {
+  text-align: center;
+}
+
+.scoreTitle {
+  margin: 0 0 24px 0;
+  font-size: 28px;
+  color: var(--text-h);
+}
+
+.scoreDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.scoreCircle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  border: 3px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.percentage {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.scoreText {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.scoreText > strong {
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.detail {
+  padding: 16px;
+  border-radius: 6px;
+  border-left: 4px solid;
+}
+
+.correct {
+  background: #efe;
+  border-color: #0a0;
+}
+
+.incorrect {
+  background: #fee;
+  border-color: #a00;
+}
+
+@media (prefers-color-scheme: dark) {
+  .correct {
+    background: #141;
+    border-color: #4a4;
+  }
+
+  .incorrect {
+    background: #421;
+    border-color: #a44;
+  }
+}
+
+.detailHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.status {
+  font-size: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.correct .status {
+  color: #0a0;
+}
+
+.incorrect .status {
+  color: #a00;
+}
+
+@media (prefers-color-scheme: dark) {
+  .correct .status {
+    color: #4a4;
+  }
+
+  .incorrect .status {
+    color: #f44;
+  }
+}
+
+.selected {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.correctAnswer {
+  margin: 8px 0 0 36px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.explanation {
+  margin: 12px 0 0 36px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  font-style: italic;
+}
+
+.nextButton {
+  all: unset;
+  cursor: pointer;
+  padding: 16px 24px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.nextButton:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.nextButton:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 20px;
+  }
+
+  .scoreTitle {
+    font-size: 24px;
+  }
+
+  .scoreCircle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .percentage {
+    font-size: 36px;
+  }
+
+  .details {
+    max-height: 300px;
+  }
+}

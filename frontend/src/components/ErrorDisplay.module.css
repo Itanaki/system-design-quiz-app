@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c33;
+}
+
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: #521;
+    border-color: #a44;
+    color: #faa;
+  }
+}
+
+.icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.container > p {
+  margin: 0;
+  font-size: 14px;
+}
