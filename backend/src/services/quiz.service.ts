@@ -25,7 +25,19 @@ export async function getSections() {
 }
 
 export async function getQuestionById(id: string) {
-  return prisma.question.findUnique({ where: { id } });
+  const question = await prisma.question.findUnique({ where: { id } });
+
+  if (!question){
+    return null;
+  }
+
+  return {
+    id: question.id,
+    prompt: question.prompt,
+    options: question.options,
+    difficulty: question.difficulty,
+    topics: question.topics,
+  }
 }
 
 export async function createQuestion(data: {
