@@ -8,7 +8,7 @@ datasource db {
 
 model Question {
     id          String  @id @default(cuid())
-    prompt      String
+    prompt      String  @unique
     options     Json
     correctAnswer String
     explanation String?
