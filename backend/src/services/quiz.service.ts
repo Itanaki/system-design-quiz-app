@@ -75,46 +75,58 @@ export async function createQuestion(data: {
 
 export async function submitAttempt(payload: {
   userId?: string;
-  answers: Array<{ questionId: string; selected: string }>;
+  answers: Array<{ 
+    questionId: string; 
+    selected: string 
+  }>;
 }) {
   const { userId, answers } = payload;
   const questionIds = answers.map((a) => a.questionId);
   const questions = await prisma.question.findMany({
-    where: { id: { in: questionIds } },
+    where: { 
+      id: { 
+        in: questionIds 
+      }, 
+    },
   });
-  const qMap = new Map(questions.map((q) => [q.id, q]));
 
-  let correctCount = 0;
-  const total = questions.length;
+  if (questions.length !== questionIds.length) {
+    throw new Error('One or more questions were not found');
+  }
+
+  const qMap = new Map(
+    questions.map((q) => [q.id, q])
+  );
+
+  const evaluatedAnswers = answers.map((a) => {
+    const question = qMap.get(a.questionId);
+    if (!question) {
+      throw new Error(`Question with ID ${a.questionId} not found`);
+    }
+    const isCorrect = question.correctAnswer === a.selected;
+    return {
+      questionId: a.questionId,
+      selected: a.selected,
+      correct: isCorrect,
+    };
+  });
+
+  const score = evaluatedAnswers.filter((a)=> a.correct).length;
+  const total = evaluatedAnswers.length;
 
   // create attempt and nested answers
   const attempt = await prisma.quizAttempt.create({
     data: {
       userId,
-      score: 0, // temporary, will update
+      score, 
       total,
       answers: {
-        create: answers.map((a) => {
-          const q = qMap.get(a.questionId);
-          const isCorrect = q ? q.correctAnswer === a.selected : false;
-          if (isCorrect) correctCount++;
-          return {
-            questionId: a.questionId,
-            selected: a.selected,
-            correct: isCorrect,
-          };
-        }),
+        create: evaluatedAnswers, 
       },
     },
     include: { answers: true },
   });
-
-  // update score
-  await prisma.quizAttempt.update({
-    where: { id: attempt.id },
-    data: { score: correctCount },
-  });
-
+  
   // build detailed feedback
   const details = attempt.answers.map((ans) => {
     const q = qMap.get(ans.questionId);
@@ -129,7 +141,7 @@ export async function submitAttempt(payload: {
 
   return {
     attemptId: attempt.id,
-    score: correctCount,
+    score,
     total,
     details,
   };
