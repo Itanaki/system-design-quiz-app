@@ -50,3 +50,37 @@ export async function createQuestion(
     next(err);
   }
 }
+
+export async function getSessionQuestions(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const difficulty = 
+      typeof req.query.difficulty === 'string' 
+      ? req.query.difficulty 
+      : undefined;
+    const topic = 
+      typeof req.query.topic === 'string'
+      ? req.query.topic
+      : undefined;
+
+    if (!difficulty){
+      return res.status(400).json({ 
+        message: 'Missing difficulty parameter',
+      });
+    }
+
+    const questions = await service.getSessionQuestions(difficulty, topic);
+
+    if (questions.length === 0) {
+      return res.status(404).json({ 
+        message: 'No questions found for the given criteria' 
+      });
+    }
+    res.json(questions);
+  } catch (err){
+    next(err);
+  }
+}

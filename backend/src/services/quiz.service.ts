@@ -24,6 +24,28 @@ export async function getSections() {
   return sections;
 }
 
+
+export async function getSessionQuestions(
+  difficulty: string,
+  topic?: string,
+) {
+  const questions = await prisma.question.findMany({
+    where: {
+      difficulty,
+      ...(topic ? { topics: { has: topic } } : {}),
+    },
+    orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+    take: 5,
+  });
+  return questions.map((question) => ({
+    id: question.id,
+    prompt: question.prompt,
+    options: question.options,
+    difficulty: question.difficulty,
+    topics: question.topics,
+  }));
+}
+
 export async function getQuestionById(id: string) {
   const question = await prisma.question.findUnique({ where: { id } });
 
@@ -112,3 +134,5 @@ export async function submitAttempt(payload: {
     details,
   };
 }
+
+
