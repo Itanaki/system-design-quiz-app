@@ -1,5 +1,5 @@
 import { type QuizSections } from '../api';
-import styles from './SectionsList.module.css';
+import styles from '../styles/SectionsList.module.css';
 
 interface SectionsListProps {
   sections: QuizSections;

@@ -1,5 +1,5 @@
 import { type PublicQuestion } from '../api';
-import styles from './QuestionCard.module.css';
+import styles from '../styles/QuestionCard.module.css';
 
 interface QuestionCardProps {
   question: PublicQuestion;

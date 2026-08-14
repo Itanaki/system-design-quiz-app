@@ -1,5 +1,5 @@
 import { type AttemptResult } from '../api';
-import styles from './ResultDisplay.module.css';
+import styles from '../styles/ResultDisplay.module.css';
 
 interface ResultDisplayProps {
   result: AttemptResult;
