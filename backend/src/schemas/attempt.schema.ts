@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const attempAnswerSchema = z.object({
-    questionId: z.string().uuid(),
-    selected: z.string(),
+    questionId: z.string().min(1),
+    selected: z.string().min(1),
 });
 
 export const attemptSchema = z.object({
