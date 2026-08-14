@@ -21,6 +21,16 @@ export type PublicQuestion = {
   topics: string[];
 };
 
+export type SessionSelection = {
+  difficulty: string;
+  topic?: string;
+};  
+
+export type AttemptAnswer = {
+  questionId: string;
+  selected: string;
+};
+
 export type AttemptResult = {
   attemptId: string;
   score: number;
@@ -41,6 +51,27 @@ export async function getSections(): Promise<QuizSections> {
     throw new Error('Unable to load quiz sections');
   }
 
+  return response.json();
+}
+
+export async function getQuizSession(
+  selection: SessionSelection,
+): Promise<PublicQuestion[]> {
+  const params = new URLSearchParams({
+    difficulty: selection.difficulty,
+  });
+
+  if(selection.topic){
+    params.set('topic', selection.topic);
+  }
+
+  const response = await fetch(
+    `${API_URL}/api/quizzes/session?${params.toString()}`,
+  );
+
+  if (!response.ok) {
+    throw new Error('Unable to load quiz session');
+  }
   return response.json();
 }
 
