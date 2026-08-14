@@ -91,3 +91,35 @@
     font-size: 13px;
   }
 }
+
+.sectionHeader,
+.topicGroup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeader {
+  margin-bottom: 1rem;
+}
+
+.sectionHeader p,
+.topicGroup p {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 600px) {
+  .sectionHeader,
+  .topicGroup {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sectionHeader .questionButton,
+  .topicGroup .questionButton {
+    width: 100%;
+  }
+}

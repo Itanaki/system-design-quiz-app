@@ -86,8 +86,7 @@ export async function getQuestion(id: string): Promise<PublicQuestion> {
 }
 
 export async function submitAttempt(
-  questionId: string,
-  selected: string,
+  answers: Array<{ questionId: string; selected: string }>,
 ): Promise<AttemptResult> {
   const response = await fetch(`${API_URL}/api/attempts`, {
     method: 'POST',
@@ -95,7 +94,7 @@ export async function submitAttempt(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      answers: [{ questionId, selected }],
+      answers,
     }),
   });
 

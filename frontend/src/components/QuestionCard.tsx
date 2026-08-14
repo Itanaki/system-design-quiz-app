@@ -3,21 +3,33 @@ import styles from '../styles/QuestionCard.module.css';
 
 interface QuestionCardProps {
   question: PublicQuestion;
+  questionNumber: number;
+  totalQuestions: number;
   selected: string | null;
   onOptionSelect: (option: string) => void;
-  onSubmit: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  isLastQuestion: boolean;
   loading: boolean;
 }
 
 export function QuestionCard({
   question,
+  questionNumber,
+  totalQuestions,
   selected,
   onOptionSelect,
-  onSubmit,
+  onPrevious,
+  onNext,
+  isLastQuestion,
   loading,
 }: QuestionCardProps) {
   return (
     <article className={styles.card}>
+      <div className={styles.progress}>
+        Question {questionNumber} of {totalQuestions}
+      </div>
+
       <div className={styles.header}>
         <span className={styles.difficulty}>{question.difficulty}</span>
         <div className={styles.topics}>
@@ -38,20 +50,32 @@ export function QuestionCard({
             className={`${styles.optionButton} ${selected === option ? styles.selected : ''}`}
             onClick={() => onOptionSelect(option)}
             type="button"
+            disabled={loading}
           >
             <span className={styles.optionText}>{option}</span>
           </button>
         ))}
       </div>
 
-      <button
-        className={styles.submitButton}
-        onClick={onSubmit}
-        disabled={!selected || loading}
-        type="button"
-      >
-        {loading ? 'Submitting...' : 'Submit Answer'}
-      </button>
+      <div className={styles.navigation}>
+        <button
+          className={styles.navigationButton}
+          onClick={onPrevious}
+          disabled={questionNumber === 1 || loading}
+          type="button"
+        >
+          Previous
+        </button>
+
+        <button
+          className={styles.submitButton}
+          onClick={onNext}
+          disabled={!selected || loading}
+          type="button"
+        >
+          {loading ? 'Submitting...' : isLastQuestion ? 'Finish Quiz' : 'Next Question'}
+        </button>
+      </div>
     </article>
   );
 }

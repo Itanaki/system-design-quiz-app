@@ -10,58 +10,100 @@ import {
   type QuizSections,
   type PublicQuestion,
   type AttemptResult,
-  getQuestion,
-  submitAttempt,
   getSections,
+  getQuizSession,
+  submitAttempt,
 } from './api';
 import styles from './App.module.css';
 
 function App() {
   const [sections, setSections] = useState<QuizSections | null>(null);
-  const [question, setQuestion] = useState<PublicQuestion | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [sessionQuestions, setSessionQuestions] = useState<PublicQuestion[] | null>(null);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleQuestionSelected(questionId: string) {
+  const currentQuestion = sessionQuestions?.[questionIndex] ?? null;
+  const currentAnswer = currentQuestion ?
+  answers[currentQuestion.id] ?? null
+  : null;
+
+  async function handleStartSession(
+    difficulty: string,
+    topic?: string,
+  ) {
     setLoading(true);
     setError(null);
-    setSelected(null);
+    setSessionQuestions(null);
+    setQuestionIndex(0);
+    setAnswers({});
     setResult(null);
 
     try {
-      const nextQuestion = await getQuestion(questionId);
-      setQuestion(nextQuestion);
+      const questions = await getQuizSession({
+        difficulty,
+        topic,
+      });
+      setSessionQuestions(questions);
     } catch {
-      setError('Failed to load question');
+      setSessionQuestions(null);
+      setError('Failed to load quiz session');
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleSubmit() {
-    if (!question || !selected) {
+  function handleOptionSelect(option: string) {
+    if (!currentQuestion) {
       return;
     }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const attemptResult = await submitAttempt(question.id, selected);
-      setResult(attemptResult);
-    } catch {
-      setError('Failed to submit attempt');
-    } finally {
-      setLoading(false);
-    }
+    setAnswers((previousAnswers) => ({
+      ...previousAnswers,
+      [currentQuestion.id]: option,
+    }));
   }
 
-  function handleNextQuestion() {
-    setQuestion(null);
-    setSelected(null);
+  function handlePrevious(){
+    setQuestionIndex((previousIndex) => Math.max(previousIndex - 1, 0));
+  }
+
+  async function handleNext() {
+    if (!currentQuestion || !currentAnswer || !sessionQuestions) {
+      return;
+  }
+  const isLastQuestion = 
+  questionIndex === sessionQuestions.length - 1;
+
+  if (!isLastQuestion) {
+    setQuestionIndex((previousIndex) => previousIndex + 1);
+    return;
+  }
+  setLoading(true);
+  setError(null);
+
+  try {
+    const attemptAnswers = sessionQuestions.map((q) =>({
+      questionId: q.id,
+      selected: answers[q.id],
+    }));
+    
+    const attemptResult = await submitAttempt(attemptAnswers);
+    setResult(attemptResult);
+  } catch {
+    setError('Failed to submit attempt');
+  } finally {
+    setLoading(false);
+  }
+}
+  
+  function handleReset() {
+    setSessionQuestions(null);
+    setQuestionIndex(0);
+    setAnswers({});
     setResult(null);
+    setError(null);
   }
 
   useEffect(() => {
@@ -83,25 +125,31 @@ function App() {
 
         {loading && !sections && <LoadingState />}
 
-        {sections && !question && !result && (
+        {sections && !sessionQuestions && !result && (
           <SectionsList
             sections={sections}
-            onQuestionSelect={handleQuestionSelected}
+            onStartSession={handleStartSession}
           />
         )}
 
-        {question && !result && (
+        {loading && sessionQuestions?.length === 0 && <LoadingState />}
+
+        {currentQuestion && sessionQuestions && !result && (
           <QuestionCard
-            question={question}
-            selected={selected}
-            onOptionSelect={setSelected}
-            onSubmit={handleSubmit}
+            question={currentQuestion}
+            questionNumber={questionIndex + 1}
+            totalQuestions={sessionQuestions.length}
+            selected={currentAnswer}
+            onOptionSelect={handleOptionSelect}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            isLastQuestion={questionIndex === sessionQuestions.length - 1}
             loading={loading}
           />
         )}
 
         {result && (
-          <ResultDisplay result={result} onNext={handleNextQuestion} />
+          <ResultDisplay result={result} onNext={handleReset} />
         )}
       </div>
     </main>

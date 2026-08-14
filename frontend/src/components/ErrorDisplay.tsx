@@ -1,4 +1,4 @@
-import styles from '..styles/ErrorDisplay.module.css';
+import styles from '../styles/ErrorDisplay.module.css';
 
 interface ErrorDisplayProps {
   message: string;
