@@ -9,6 +9,7 @@ interface QuestionCardProps {
   onOptionSelect: (option: string) => void;
   onPrevious: () => void;
   onNext: () => void;
+  onBack: () => void;
   isLastQuestion: boolean;
   loading: boolean;
 }
@@ -21,11 +22,21 @@ export function QuestionCard({
   onOptionSelect,
   onPrevious,
   onNext,
+  onBack,
   isLastQuestion,
   loading,
 }: QuestionCardProps) {
   return (
     <article className={styles.card}>
+      <button
+        className={styles.backButton}
+        onClick={onBack}
+        type="button"
+        disabled={loading}
+      >
+        Back to quizzes
+      </button>
+
       <div className={styles.progress}>
         Question {questionNumber} of {totalQuestions}
       </div>

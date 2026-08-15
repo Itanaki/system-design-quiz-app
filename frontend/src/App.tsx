@@ -106,6 +106,17 @@ function App() {
     setError(null);
   }
 
+  function handleBackFromAttempt() {
+    if (
+      Object.keys(answers).length > 0 &&
+      !window.confirm('Leave this quiz? Your answers will be lost.')
+    ) {
+      return;
+    }
+
+    handleReset();
+  }
+
   useEffect(() => {
     getSections()
       .then(setSections)
@@ -143,6 +154,7 @@ function App() {
             onOptionSelect={handleOptionSelect}
             onPrevious={handlePrevious}
             onNext={handleNext}
+            onBack={handleBackFromAttempt}
             isLastQuestion={questionIndex === sessionQuestions.length - 1}
             loading={loading}
           />
