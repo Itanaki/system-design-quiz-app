@@ -147,22 +147,26 @@
 
 .backButton {
   align-self: flex-start;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #2563eb;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  color: #1e293b;
   cursor: pointer;
   font: inherit;
   font-weight: 600;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .backButton:hover:not(:disabled) {
-  text-decoration: underline;
+  border-color: #2563eb;
+  background: #eff6ff;
 }
 
 .backButton:focus-visible {
   outline: 2px solid #2563eb;
-  outline-offset: 4px;
+  outline-offset: 2px;
 }
 
 .backButton:disabled {
