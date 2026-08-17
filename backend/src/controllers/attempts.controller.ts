@@ -11,7 +11,7 @@ export async function postAttempt(
     const payload = attemptSchema.parse(req.body);
 
     const result = await submitAttempt({
-      userId: (req as any).user?.id,
+      userId: req.user?.id,
       answers: payload.answers,
     });
     
