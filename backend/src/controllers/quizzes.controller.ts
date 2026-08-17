@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as service from '../services/quiz.service';
+import createQuestionSchema from '../schemas/createQuestion.schema';
 
 export async function getSections(
   _req: Request,

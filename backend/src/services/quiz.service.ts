@@ -1,4 +1,6 @@
+import { NextFunction, Request, Response } from 'express';
 import prisma from '../lib/prisma';
+import { createQuestionSchema } from '../schemas/quiz.schemas';
 
 export async function getSections() {
   const questions = await prisma.question.findMany({
@@ -62,15 +64,19 @@ export async function getQuestionById(id: string) {
   }
 }
 
-export async function createQuestion(data: {
-  prompt: string;
-  options: any;
-  correctAnswer: string;
-  explanation?: string;
-  difficulty: string;
-  topics: string[];
-}) {
-  return prisma.question.create({ data });
+export async function createQuestion(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try{
+    const payload = createQuestionSchema.parse(req.body);
+    const created = await prisma.question.create({ data: payload });
+
+    res.status(201).json(created);
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function submitAttempt(payload: {
@@ -103,6 +109,15 @@ export async function submitAttempt(payload: {
     if (!question) {
       throw new Error(`Question with ID ${a.questionId} not found`);
     }
+
+    const options = Array.isArray(question.options)
+      ? question.options
+      : [];
+    
+    if (!options.includes(a.selected)) {
+      throw new Error(`Selected answer "${a.selected}" is not a valid option for question ID ${a.questionId}`);
+    }
+
     const isCorrect = question.correctAnswer === a.selected;
     return {
       questionId: a.questionId,

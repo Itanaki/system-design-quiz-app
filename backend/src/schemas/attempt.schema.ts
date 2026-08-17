@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-export const attempAnswerSchema = z.object({
+export const attemptAnswerSchema = z.object({
     questionId: z.string().min(1),
     selected: z.string().min(1),
 });
 
 export const attemptSchema = z.object({
     answers: z
-    .array(attempAnswerSchema)
+    .array(attemptAnswerSchema)
     .min(1)
     .superRefine((answers, context) => {
         const questionIds = answers.map((answers) => answers.questionId);
