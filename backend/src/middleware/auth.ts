@@ -45,17 +45,3 @@ export async function requireAuth(
     next();
   });
 }
-
-export async function requireAuth(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-) {
-    await optionalAuth(req, res, () => {
-        if (!req.user) {
-            res.status(401).json({ message: 'Authentication required' });
-            return;
-        }
-        next();
-    });
-}
