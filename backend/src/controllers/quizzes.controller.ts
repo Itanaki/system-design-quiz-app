@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import * as service from '../services/quiz.service';
-import createQuestionSchema from '../schemas/createQuestion.schema';
+import { createQuestionSchema } from '../schemas/quiz.schemas';
 
-export async function getSections(
+export async function getSectionsController(
   _req: Request,
   res: Response,
   next: NextFunction,
@@ -15,7 +15,7 @@ export async function getSections(
   }
 }
 
-export async function getQuestion(
+export async function getQuestionController(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -39,20 +39,22 @@ export async function getQuestion(
   }
 }
 
-export async function createQuestion(
+export async function createQuestionController(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
   try {
-    const created = await service.createQuestion(req.body);
+    const payload = createQuestionSchema.parse(req.body);
+    const created = await service.createQuestion(payload);
+    
     res.status(201).json(created);
   } catch (err) {
     next(err);
   }
 }
 
-export async function getSessionQuestions(
+export async function getSessionQuestionsController(
   req: Request,
   res: Response,
   next: NextFunction,
