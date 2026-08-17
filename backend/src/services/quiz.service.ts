@@ -156,4 +156,61 @@ export async function submitAttempt(payload: {
   };
 }
 
+export async function getAttemptsForUser(userId: string) {
+  const attempts = await prisma.quizAttempt.findMany({
+    where: { userId},
+    orderBy: { createdAt: 'desc' },
+    include: { answers: true },
+  });
+
+  return attempts.map((attempt) => ({
+    attemptId: attempt.id,
+    score: attempt.score,
+    total: attempt.total,
+    percentage: attempt.total > 0 ? (attempt.score / attempt.total) * 100 : 0,
+    completed: true,
+    createdAt: attempt.createdAt,
+  }));
+}
+
+export async function getAttemptForUser(
+  userId: string,
+  attemptId: string,
+) {
+  const attempt = await prisma.quizAttempt.findFirst({
+    where: {
+      id: attemptId,
+      userId,
+    },
+    include: {
+      answers: {
+        include: {
+          question: true,
+        },
+      },
+    },
+  });
+
+  if (!attempt) {
+    return null;
+  }
+
+  return {
+    attemptId: attempt.id,
+    score: attempt.score,
+    total: attempt.total,
+    percentage: Math.round((attempt.score / attempt.total) * 100),
+    completed: true,
+    createdAt: attempt.createdAt,
+    details: attempt.answers.map((answer) => ({
+      questionId: answer.questionId,
+      selected: answer.selected,
+      correct: answer.correct,
+      explanation: answer.question?.explanation ?? null,
+      correctAnswer: answer.question?.correctAnswer ?? null,
+    })),
+  };
+
+
+}
 
