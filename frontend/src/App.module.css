@@ -27,6 +27,23 @@
   color: var(--text);
 }
 
+.signUpButton {
+  margin-top: 16px;
+  padding: 12px 24px;
+  background-color: var(--accent-bg);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.signUpButton:hover {
+  background-color: #0056b3;
+}
+
 .content {
   flex: 1;
   padding: 40px 24px;

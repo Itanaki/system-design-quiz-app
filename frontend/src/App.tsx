@@ -16,6 +16,7 @@ import {
 } from './api';
 import styles from './App.module.css';
 import { supabase } from './lib/supabase';
+import { AuthForm } from './components/AuthForm';
 
 function App() {
   const [session, setSession] = 
@@ -27,6 +28,7 @@ function App() {
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const currentQuestion = sessionQuestions?.[questionIndex] ?? null;
   const currentAnswer = currentQuestion ?
@@ -145,8 +147,14 @@ function App() {
       <header className={styles.header}>
         <h1>System Design Quiz</h1>
         <p>Test your knowledge on system design concepts</p>
+        {session ? (
+          <div>
+            <p>Signed in as: {session.user.email}</p>
+          </div>
+        ) : (
+          <button className={styles.signUpButton} onClick={() => setShowAuthModal(true)}>Sign Up / Log In</button>
+        )}
       </header>
-
       <div className={styles.content}>
         {error && <ErrorDisplay message={error} />}
 
@@ -180,6 +188,7 @@ function App() {
           <ResultDisplay result={result} onNext={handleReset} />
         )}
       </div>
+      <AuthForm isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} session={session} />
     </main>
   );
 }
