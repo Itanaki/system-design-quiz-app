@@ -15,8 +15,11 @@ import {
   submitAttempt,
 } from './api';
 import styles from './App.module.css';
+import { supabase } from './lib/supabase';
 
 function App() {
+  const [session, setSession] = 
+    useState<Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session']>(null);
   const [sections, setSections] = useState<QuizSections | null>(null);
   const [sessionQuestions, setSessionQuestions] = useState<PublicQuestion[] | null>(null);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -116,6 +119,19 @@ function App() {
 
     handleReset();
   }
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data}) => {
+      setSession(data.session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      setSession(currentSession);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     getSections()
