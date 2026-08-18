@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: color-mix(in srgb, var(--text-h) 60%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,10 +12,10 @@
 }
 
 .modal {
-  background: white;
+  background: var(--bg);
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow);
   max-width: 400px;
   width: 100%;
   animation: slideIn 0.3s ease-out;
@@ -36,7 +36,7 @@
   margin: 0 0 24px 0;
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-h);
   text-align: center;
 }
 
@@ -48,7 +48,9 @@
 
 .input {
   padding: 12px 16px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
@@ -57,14 +59,14 @@
 
 .input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .submitButton {
   padding: 12px 16px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--accent);
+  color: var(--bg);
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -74,18 +76,19 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: #0056b3;
+  filter: brightness(0.9);
 }
 
 .submitButton:disabled {
-  background-color: #ccc;
+  background-color: var(--border);
+  color: var(--text);
   cursor: not-allowed;
 }
 
 .toggleButton {
   background: none;
   border: none;
-  color: #007bff;
+  color: var(--accent);
   cursor: pointer;
   font-size: 14px;
   margin-top: 12px;
@@ -95,14 +98,15 @@
 }
 
 .toggleButton:hover {
-  color: #0056b3;
+  color: var(--text-h);
   text-decoration: underline;
 }
 
 .signOutButton {
   padding: 12px 16px;
-  background-color: #dc3545;
-  color: white;
+  background-color: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -113,13 +117,14 @@
 }
 
 .signOutButton:hover {
-  background-color: #c82333;
+  background-color: var(--accent);
+  color: var(--bg);
 }
 
 .error {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
+  color: var(--text-h);
+  background-color: var(--accent-bg);
+  border: 1px solid var(--accent-border);
   padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 16px;
@@ -127,9 +132,9 @@
 }
 
 .confirmationMessage {
-  color: #155724;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
+  color: var(--text-h);
+  background-color: var(--accent-bg);
+  border: 1px solid var(--accent-border);
   padding: 12px 16px;
   border-radius: 6px;
   margin-top: 16px;
@@ -145,7 +150,7 @@
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
+  color: var(--text);
   padding: 0;
   width: 32px;
   height: 32px;
@@ -156,7 +161,7 @@
 }
 
 .closeButton:hover {
-  color: #333;
+  color: var(--text-h);
 }
 
 .modalContent {

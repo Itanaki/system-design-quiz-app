@@ -17,6 +17,7 @@ import {
 import styles from './App.module.css';
 import { supabase } from './lib/supabase';
 import { AuthForm } from './components/AuthForm';
+import { signOut } from './auth';
 
 function App() {
   const [session, setSession] = 
@@ -102,6 +103,13 @@ function App() {
     setLoading(false);
   }
 }
+  async function handleSignOut() {
+  const { error: signOutError } = await signOut();
+
+  if (signOutError) {
+    setError(signOutError.message);
+  }
+}
   
   function handleReset() {
     setSessionQuestions(null);
@@ -150,6 +158,13 @@ function App() {
         {session ? (
           <div>
             <p>Signed in as: {session.user.email}</p>
+            <button
+              className={styles.signOutButton}
+              type="button"
+              onClick={handleSignOut}
+            >
+              Sign Out
+            </button>
           </div>
         ) : (
           <button className={styles.signUpButton} onClick={() => setShowAuthModal(true)}>Sign Up / Log In</button>

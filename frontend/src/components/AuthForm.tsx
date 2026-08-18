@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 import { signIn, signOut } from '../auth';
 import { supabase, } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
-import styles from './AuthForm.module.css';
+import styles from '../styles/AuthForm.module.css';
 
 interface AuthFormProps {
     isOpen: boolean;
