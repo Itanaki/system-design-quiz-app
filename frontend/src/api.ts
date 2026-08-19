@@ -2,6 +2,135 @@ import { supabase } from './lib/supabase';
 const API_URL =
   import.meta.env.VITE_API_URL ?? 'http://localhost:4000';
 
+export type AdminQuestion = {
+  id: string;
+  prompt: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string | null;
+  difficulty: 'easy' | 'medium' | 'hard';
+  topics: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type QuestionInput = {
+  prompt: string;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  topics: string[];
+};
+
+export type QuestionFilters = {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  topic?: string;
+};
+
+export type PaginatedQuestions = {
+  items: AdminQuestion[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+async function getApiError(response: Response) {
+  try {
+    const body = await response.json();
+    return body.message ?? 'Request failed';
+  } catch {
+    return 'Request failed';
+  }
+}
+
+
+function buildQuestionQuery(filters: QuestionFilters) {
+  const params = new URLSearchParams();
+
+  if (filters.page) {
+    params.set('page', String(filters.page));
+  }
+
+  if (filters.pageSize) {
+    params.set('pageSize', String(filters.pageSize));
+  }
+
+  if (filters.search) {
+    params.set('search', filters.search);
+  }
+
+  if (filters.difficulty) {
+    params.set('difficulty', filters.difficulty);
+  }
+
+  if (filters.topic) {
+    params.set('topic', filters.topic);
+  }
+
+  return params.toString();
+}
+
+export async function listAdminQuestions(
+  filters: QuestionFilters = {},
+): Promise<PaginatedQuestions> {
+  const query = buildQuestionQuery(filters);
+  const response = await apiFetch(
+    `/api/quizzes/questions${query ? `?${query}` : ''}`,
+  );
+
+  if (!response.ok) {
+    throw new Error(await getApiError(response));
+  }
+
+  return response.json();
+}
+
+export async function createQuestion(
+  input: QuestionInput,
+): Promise<AdminQuestion> {
+  const response = await apiFetch('/api/quizzes/questions', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(await getApiError(response));
+  }
+
+  return response.json();
+}
+
+export async function updateQuestion(
+  id: string,
+  input: Partial<QuestionInput>,
+): Promise<AdminQuestion> {
+  const response = await apiFetch(`/api/quizzes/questions/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error(await getApiError(response));
+  }
+
+  return response.json();
+}
+
+export async function deleteQuestion(id: string): Promise<void> {
+  const response = await apiFetch(`/api/quizzes/questions/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error(await getApiError(response));
+  }
+}
+
 async function getAccessToken() {
   const { data } = await supabase.auth.getSession();
   return data.session?.access_token;
