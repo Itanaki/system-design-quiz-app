@@ -111,7 +111,7 @@ export async function updateQuestionController(
   try {
     const { id } = req.params;
 
-    if (!id) {
+    if (typeof id !== 'string') {
       return res.status(400).json({
         message: 'Missing question ID in request parameters',
       });
