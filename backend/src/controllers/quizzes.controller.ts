@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as service from '../services/quiz.service';
-import { createQuestionSchema } from '../schemas/quiz.schemas';
+import { createQuestionSchema, updateQuestionSchema, questionListQuerySchema } from '../schemas/quiz.schemas';
 
 export async function getSectionsController(
   _req: Request,
@@ -85,5 +85,62 @@ export async function getSessionQuestionsController(
     res.json(questions);
   } catch (err){
     next(err);
+  }
+}
+
+export async function listQuestionsController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const filters = questionListQuerySchema.parse(req.query);
+    const result = await service.listQuestions(filters);
+
+    res.json(result);
+  } catch (error){
+    next(error);
+  }
+}
+
+export async function updateQuestionController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        message: 'Missing question ID in request parameters',
+      });
+    }
+
+    const payload = updateQuestionSchema.parse(req.body);
+    const updated = await service.updateQuestion(id, payload);
+    res.json(updated);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteQuestionController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.params;
+
+    if (typeof id !== 'string') {
+      return res.status(400).json({ message: 'Invalid question ID' });
+    }
+
+    await service.deleteQuestion(id);
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
   }
 }

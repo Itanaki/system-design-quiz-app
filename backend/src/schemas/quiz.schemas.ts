@@ -17,31 +17,30 @@ const topicsSchema = z
         'Topics must be unique'
     );
 
+const questionFields = {
+    prompt: z
+        .string()
+        .trim()
+        .min(1, 'Prompt cannot be empty')
+        .max(100, 'Prompt cannot exceed 100 characters'),
+    options: optionsSchema,
+
+    correctAnswer: z
+        .string()
+        .trim()
+        .min(1, 'Correct answer cannot be empty'),
+    
+    explanation: z
+        .string()
+        .trim()
+        .max(500, 'Explanation cannot exceed 500 characters')
+        .optional(),
+    difficulty: difficultySchema,
+
+    topics: topicsSchema,
+};
 export const createQuestionSchema = z
-    .object({
-        prompt: z
-            .string()
-            .trim()
-            .min(1, 'Prompt cannot be empty')
-            .max(100, 'Prompt cannot exceed 100 characters'),
-
-        options: optionsSchema,
-
-        correctAnswer: z
-            .string()
-            .trim()
-            .min(1, 'Correct answer cannot be empty'),
-        
-        explanation: z
-            .string()
-            .trim()
-            .max(500, 'Explanation cannot exceed 500 characters')
-            .optional(),
-
-        difficulty: difficultySchema,
-
-        topics: topicsSchema,
-    })
+    .object(questionFields)
     .superRefine((question, context) => {
         if (!question.options.includes(question.correctAnswer)) {
             context.addIssue({
@@ -52,4 +51,12 @@ export const createQuestionSchema = z
         }
     });
 
-export const updateQuestionSchema = createQuestionSchema;
+export const updateQuestionSchema = z.object(questionFields).partial();
+
+export const questionListQuerySchema = z.object({
+    page: z.coerce.number().int().min(1).default(1),
+    pageSize: z.coerce.number().int().min(1).max(100).default(10),
+    search: z.string().trim().optional(),
+    difficulty: difficultySchema.optional(),
+    topics: z.string().trim().min(1).optional(),
+})

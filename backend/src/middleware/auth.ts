@@ -45,3 +45,20 @@ export async function requireAuth(
     next();
   });
 }
+
+export async function requireAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  await requireAuth(req, res, () => {
+    const role = req.user?.app_metadata?.role;
+
+    if (role !== 'admin') {
+      res.status(403).json({ message: 'Admin access required' });
+      return;
+    }
+
+    next();
+  });
+}

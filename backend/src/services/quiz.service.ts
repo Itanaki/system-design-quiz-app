@@ -1,4 +1,88 @@
 import prisma from '../lib/prisma';
+import { ApiError } from '../utils/apiError';
+import { createQuestionSchema } from '../schemas/quiz.schemas';
+
+type QuestionInput = {
+  prompt: string;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  topics: string[];
+};
+
+type QuestionFilters = {
+  page: number;
+  pageSize: number;
+  search?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  topic?: string;
+};
+
+function serializeAdminQuestion(question: {
+  id: string;
+  prompt: string;
+  options: unknown;
+  correctAnswer: string;
+  explanation: string | null;
+  difficulty: string;
+  topics: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}) {
+  return {
+    id: question.id,
+    prompt: question.prompt,
+    options: question.options as string[],
+    correctAnswer: question.correctAnswer,
+    explanation: question.explanation,
+    difficulty: question.difficulty,
+    topics: question.topics,
+    createdAt: question.createdAt,
+    updatedAt: question.updatedAt,
+  };
+}
+
+export async function listQuestions(filters: QuestionFilters){
+  const {
+    page,
+    pageSize,
+    search,
+    difficulty,
+    topic,
+  } = filters;
+
+  const where = {
+    ...(search ?
+      {
+        prompt: {
+          contains: search,
+          mode: 'insensitive' as const,
+        },
+      }
+    : {}),
+    ...(difficulty ? { difficulty } : {}),
+    ...(topic ? { topics: { has: topic } } : {}),
+  };
+
+  const [questions, total] = await Promise.all([
+    prisma.question.findMany({
+      where,
+      orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.question.count({ where }),
+  ]);
+
+  return {
+    items: questions.map(serializeAdminQuestion),
+    page,
+    pageSize,
+    total,
+    totalPages: Math.ceil(total / pageSize),
+  };
+}
 
 export async function getSections() {
   const questions = await prisma.question.findMany({
@@ -62,15 +146,81 @@ export async function getQuestionById(id: string) {
   }
 }
 
-export async function createQuestion(data: {
-  prompt: string;
-  options: string[];
-  correctAnswer: string;
-  explanation?: string;
-  difficulty: string;
-  topics: string[];
-}) {
-  return prisma.question.create({ data });
+export async function createQuestion(data: QuestionInput) {
+  const validated = createQuestionSchema.parse(data);
+
+  try {
+    const question = await prisma.question.create({
+      data: validated,
+    });
+
+    return serializeAdminQuestion(question);
+  } catch (error: unknown) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 'P2002'
+    ) {
+      throw new ApiError(400, 'A question with the same prompt already exists');
+    }
+    throw error;
+  }
+}
+
+export async function updateQuestion(
+  id: string,
+  data: Partial<QuestionInput>,
+) {
+  const existing = await prisma.question.findUnique({
+    where: { id },
+  });
+
+  if (!existing) {
+    throw new ApiError(404, 'Question not found');
+  }
+
+  const merged = createQuestionSchema.parse({
+    prompt: data.prompt ?? existing.prompt,
+    options: data.options ?? (existing.options as string[]),
+    correctAnswer: data.correctAnswer ?? existing.correctAnswer,
+    explanation: data.explanation ?? existing.explanation ?? undefined,
+    difficulty: data.difficulty ?? existing.difficulty,
+    topics: data.topics ?? existing.topics,
+  });
+
+  try {
+    const updated = await prisma.question.update({
+      where: { id },
+      data: merged,
+    });
+    
+    return serializeAdminQuestion(updated);
+  } catch (error: unknown) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 'P2002'
+    ) {
+      throw new ApiError(400, 'A question with the same prompt already exists');
+    }
+    throw error;
+  }
+}
+
+export async function deleteQuestion(id: string) {
+  const existing = await prisma.question.findUnique({
+    where: { id },
+  });
+
+  if (!existing) {
+    throw new ApiError(404, 'Question not found');
+  }
+
+  await prisma.question.delete({
+    where: { id },
+  });
 }
 
 export async function submitAttempt(payload: {
