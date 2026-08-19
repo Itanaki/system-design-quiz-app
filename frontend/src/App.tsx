@@ -5,6 +5,7 @@ import {
   SectionsList,
   QuestionCard,
   ResultDisplay,
+  AdminQuestions,
 } from './components';
 import {
   type QuizSections,
@@ -35,6 +36,14 @@ function App() {
   const currentAnswer = currentQuestion ?
   answers[currentQuestion.id] ?? null
   : null;
+
+  const [view, setView] = useState<'quiz' | 'admin'>(
+  window.location.pathname === '/admin/questions'
+    ? 'admin'
+    : 'quiz',
+);
+  const isAdmin =
+  session?.user.app_metadata?.role === 'admin';
 
   async function handleStartSession(
     difficulty: string,
@@ -130,6 +139,16 @@ function App() {
     handleReset();
   }
 
+  function openAdminView() {
+  window.history.pushState({}, '', '/admin/questions');
+  setView('admin');
+  }
+
+  function returnToQuiz() {
+    window.history.pushState({}, '', '/');
+    setView('quiz');
+  }
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data}) => {
       setSession(data.session);
@@ -171,38 +190,48 @@ function App() {
         )}
       </header>
       <div className={styles.content}>
-        {error && <ErrorDisplay message={error} />}
+  {view === 'admin' && isAdmin ? (
+    <AdminQuestions onBack={returnToQuiz} />
+  ) : view === 'admin' ? (
+    <ErrorDisplay message="Admin access required" />
+  ) : (
+    <>
+      {error && <ErrorDisplay message={error} />}
 
-        {loading && !sections && <LoadingState />}
+      {loading && !sections && <LoadingState />}
 
-        {sections && !sessionQuestions && !result && (
-          <SectionsList
-            sections={sections}
-            onStartSession={handleStartSession}
-          />
-        )}
+      {sections && !sessionQuestions && !result && (
+        <SectionsList
+          sections={sections}
+          onStartSession={handleStartSession}
+        />
+      )}
 
-        {loading && sessionQuestions?.length === 0 && <LoadingState />}
+      {loading && sessionQuestions?.length === 0 && <LoadingState />}
 
-        {currentQuestion && sessionQuestions && !result && (
-          <QuestionCard
-            question={currentQuestion}
-            questionNumber={questionIndex + 1}
-            totalQuestions={sessionQuestions.length}
-            selected={currentAnswer}
-            onOptionSelect={handleOptionSelect}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-            onBack={handleBackFromAttempt}
-            isLastQuestion={questionIndex === sessionQuestions.length - 1}
-            loading={loading}
-          />
-        )}
+      {currentQuestion && sessionQuestions && !result && (
+        <QuestionCard
+          question={currentQuestion}
+          questionNumber={questionIndex + 1}
+          totalQuestions={sessionQuestions.length}
+          selected={currentAnswer}
+          onOptionSelect={handleOptionSelect}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          onBack={handleBackFromAttempt}
+          isLastQuestion={
+            questionIndex === sessionQuestions.length - 1
+          }
+          loading={loading}
+        />
+      )}
 
-        {result && (
-          <ResultDisplay result={result} onNext={handleReset} />
-        )}
-      </div>
+      {result && (
+        <ResultDisplay result={result} onNext={handleReset} />
+      )}
+    </>
+  )}
+</div>
       <AuthForm isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} session={session} />
     </main>
   );

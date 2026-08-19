@@ -7,6 +7,7 @@ import {
   type AdminQuestion,
   type QuestionInput,
 } from '../api';
+import styles from '../styles/AdminQuestions.module.css';
 
 type Props = {
   onBack: () => void;
@@ -179,16 +180,23 @@ export function AdminQuestions({ onBack }: Props) {
   }
 
   return (
-    <section>
-      <div>
-        <button type="button" onClick={onBack}>
+    <section className={styles.page}>
+      <div className={styles.header}>
+        <button className={styles.backButton} type="button" onClick={onBack}>
           Back to quiz
         </button>
-        <h2>Question administration</h2>
+        <div>
+          <p className={styles.eyebrow}>Content workspace</p>
+          <h2>Question administration</h2>
+          <p className={styles.subtitle}>
+            Manage the questions used in the system design quiz.
+          </p>
+        </div>
       </div>
 
-      <div>
+      <div className={styles.filters}>
         <input
+          className={styles.input}
           value={search}
           placeholder="Search prompts"
           onChange={(event) => {
@@ -198,6 +206,7 @@ export function AdminQuestions({ onBack }: Props) {
         />
 
         <select
+          className={styles.input}
           value={difficulty}
           onChange={(event) => {
             setPage(1);
@@ -211,6 +220,7 @@ export function AdminQuestions({ onBack }: Props) {
         </select>
 
         <input
+          className={styles.input}
           value={topic}
           placeholder="Filter by topic"
           onChange={(event) => {
@@ -220,120 +230,168 @@ export function AdminQuestions({ onBack }: Props) {
         />
       </div>
 
-      {error && <p role="alert">{error}</p>}
+      {error && <p className={styles.error} role="alert">{error}</p>}
 
-      <form onSubmit={handleSubmit}>
-        <h3>{editingId ? 'Edit question' : 'Create question'}</h3>
+      <div className={styles.workspace}>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.formHeader}>
+            <p className={styles.eyebrow}>Editor</p>
+            <h3>{editingId ? 'Edit question' : 'Create question'}</h3>
+          </div>
 
-        <input
-          required
-          value={form.prompt}
-          placeholder="Prompt"
-          onChange={(event) => updateForm('prompt', event.target.value)}
-        />
+          <label className={styles.field}>
+            Prompt
+            <input
+              className={styles.input}
+              required
+              value={form.prompt}
+              placeholder="Write the question prompt"
+              onChange={(event) => updateForm('prompt', event.target.value)}
+            />
+          </label>
 
-        {form.options.map((option, index) => (
-          <input
-            key={index}
-            required
-            value={option}
-            placeholder={`Option ${index + 1}`}
-            onChange={(event) => {
-              const options = [...form.options];
-              options[index] = event.target.value;
-              updateForm('options', options);
-            }}
-          />
-        ))}
+          <fieldset className={styles.fieldset}>
+            <legend>Answer options</legend>
+            {form.options.map((option, index) => (
+              <input
+                className={styles.input}
+                key={index}
+                required
+                value={option}
+                placeholder={`Option ${index + 1}`}
+                onChange={(event) => {
+                  const options = [...form.options];
+                  options[index] = event.target.value;
+                  updateForm('options', options);
+                }}
+              />
+            ))}
+          </fieldset>
 
-        <button
-          type="button"
-          onClick={() => updateForm('options', [...form.options, ''])}
-        >
-          Add option
-        </button>
-
-        <input
-          required
-          value={form.correctAnswer}
-          placeholder="Correct answer"
-          onChange={(event) =>
-            updateForm('correctAnswer', event.target.value)
-          }
-        />
-
-        <textarea
-          value={form.explanation ?? ''}
-          placeholder="Explanation"
-          onChange={(event) =>
-            updateForm('explanation', event.target.value)
-          }
-        />
-
-        <select
-          value={form.difficulty}
-          onChange={(event) =>
-            updateForm(
-              'difficulty',
-              event.target.value as QuestionInput['difficulty'],
-            )
-          }
-        >
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-
-        <input
-          required
-          value={form.topics.join(', ')}
-          placeholder="Topics separated by commas"
-          onChange={(event) =>
-            updateForm(
-              'topics',
-              event.target.value.split(','),
-            )
-          }
-        />
-
-        <button type="submit" disabled={saving}>
-          {saving ? 'Saving...' : editingId ? 'Update question' : 'Create question'}
-        </button>
-
-        {editingId && (
-          <button type="button" onClick={startCreate}>
-            Cancel edit
+          <button
+            className={styles.secondaryButton}
+            type="button"
+            onClick={() => updateForm('options', [...form.options, ''])}
+          >
+            Add option
           </button>
-        )}
-      </form>
 
-      {loading ? (
-        <p>Loading questions...</p>
-      ) : questions.length === 0 ? (
-        <p>No questions found.</p>
-      ) : (
-        <div>
-          {questions.map((question) => (
-            <article key={question.id}>
-              <h3>{question.prompt}</h3>
-              <p>
-                {question.difficulty} | {question.topics.join(', ')}
-              </p>
-              <p>Correct answer: {question.correctAnswer}</p>
+          <label className={styles.field}>
+            Correct answer
+            <input
+              className={styles.input}
+              required
+              value={form.correctAnswer}
+              placeholder="Must match one option"
+              onChange={(event) =>
+                updateForm('correctAnswer', event.target.value)
+              }
+            />
+          </label>
 
-              <button type="button" onClick={() => startEdit(question)}>
-                Edit
+          <label className={styles.field}>
+            Explanation
+            <textarea
+              className={styles.input}
+              value={form.explanation ?? ''}
+              placeholder="Explain the answer after submission"
+              rows={4}
+              onChange={(event) =>
+                updateForm('explanation', event.target.value)
+              }
+            />
+          </label>
+
+          <div className={styles.twoColumns}>
+            <label className={styles.field}>
+              Difficulty
+              <select
+                className={styles.input}
+                value={form.difficulty}
+                onChange={(event) =>
+                  updateForm(
+                    'difficulty',
+                    event.target.value as QuestionInput['difficulty'],
+                  )
+                }
+              >
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </label>
+
+            <label className={styles.field}>
+              Topics
+              <input
+                className={styles.input}
+                required
+                value={form.topics.join(', ')}
+                placeholder="scalability, caching"
+                onChange={(event) =>
+                  updateForm('topics', event.target.value.split(','))
+                }
+              />
+            </label>
+          </div>
+
+          <div className={styles.formActions}>
+            <button className={styles.primaryButton} type="submit" disabled={saving}>
+              {saving ? 'Saving...' : editingId ? 'Update question' : 'Create question'}
+            </button>
+
+            {editingId && (
+              <button className={styles.secondaryButton} type="button" onClick={startCreate}>
+                Cancel edit
               </button>
+            )}
+          </div>
+        </form>
 
-              <button type="button" onClick={() => void handleDelete(question)}>
-                Delete
-              </button>
-            </article>
-          ))}
+        <div className={styles.questionList}>
+          <div className={styles.listHeader}>
+            <div>
+              <p className={styles.eyebrow}>Library</p>
+              <h3>Existing questions</h3>
+            </div>
+            <span className={styles.count}>{questions.length} shown</span>
+          </div>
+
+          {loading ? (
+            <p className={styles.emptyState}>Loading questions...</p>
+          ) : questions.length === 0 ? (
+            <p className={styles.emptyState}>No questions found.</p>
+          ) : (
+            <div className={styles.cards}>
+              {questions.map((question) => (
+                <article className={styles.questionCard} key={question.id}>
+                  <div className={styles.cardTopline}>
+                    <span className={`${styles.badge} ${styles[question.difficulty]}`}>
+                      {question.difficulty}
+                    </span>
+                    <span className={styles.questionId}>{question.id}</span>
+                  </div>
+                  <h3>{question.prompt}</h3>
+                  <p className={styles.metadata}>{question.topics.join('  /  ')}</p>
+                  <p className={styles.answer}>Answer: {question.correctAnswer}</p>
+
+                  <div className={styles.cardActions}>
+                    <button className={styles.secondaryButton} type="button" onClick={() => startEdit(question)}>
+                      Edit
+                    </button>
+
+                    <button className={styles.deleteButton} type="button" onClick={() => void handleDelete(question)}>
+                      Delete
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      <div>
+      <div className={styles.pagination}>
         <button
           type="button"
           disabled={page <= 1}
