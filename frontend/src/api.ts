@@ -193,6 +193,12 @@ export type AttemptResult = {
   attemptId: string;
   score: number;
   total: number;
+  percentage?: number;
+  completed?: boolean;
+  createdAt?: string;
+  completedAt?: string | null;
+  difficulty?: string | null;
+  topic?: string | null;
   details: Array<{
     questionId: string;
     selected: string;
@@ -201,7 +207,6 @@ export type AttemptResult = {
     correctAnswer: string | null;
   }>;
 };
-
 export async function getSections(): Promise<QuizSections> {
   const response = await fetch(`${API_URL}/api/quizzes/sections`);
 
@@ -268,6 +273,9 @@ export type AttemptSummary = {
   percentage: number;
   completed: boolean;
   createdAt: string;
+  completedAt: string | null;
+  difficulty: string | null;
+  topic: string | null;
 };
 
 export async function getAttemptHistory(): Promise<AttemptSummary[]> {

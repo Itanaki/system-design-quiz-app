@@ -229,8 +229,10 @@ export async function submitAttempt(payload: {
     questionId: string; 
     selected: string 
   }>;
+  difficulty?: string;
+  topic?: string;
 }) {
-  const { userId, answers } = payload;
+  const { userId, answers, difficulty, topic } = payload;
   const questionIds = answers.map((a) => a.questionId);
   const questions = await prisma.question.findMany({
     where: { 
@@ -279,6 +281,9 @@ export async function submitAttempt(payload: {
       userId,
       score, 
       total,
+      difficulty: difficulty ?? null,
+      topic: topic ?? null,
+      completedAt: new Date(),
       answers: {
         create: evaluatedAnswers, 
       },
@@ -306,9 +311,10 @@ export async function submitAttempt(payload: {
   };
 }
 
+// get all attempts for user
 export async function getAttemptsForUser(userId: string) {
   const attempts = await prisma.quizAttempt.findMany({
-    where: { userId},
+    where: { userId },  // ← Remove attemptId, just filter by userId
     orderBy: { createdAt: 'desc' },
     include: { answers: true },
   });
@@ -320,9 +326,13 @@ export async function getAttemptsForUser(userId: string) {
     percentage: attempt.total > 0 ? (attempt.score / attempt.total) * 100 : 0,
     completed: true,
     createdAt: attempt.createdAt,
+    completedAt: attempt.completedAt,
+    difficulty: attempt.difficulty,
+    topic: attempt.topic,
   }));
 }
 
+// one attempt of the user with full details
 export async function getAttemptForUser(
   userId: string,
   attemptId: string,
@@ -352,6 +362,9 @@ export async function getAttemptForUser(
     percentage: Math.round((attempt.score / attempt.total) * 100),
     completed: true,
     createdAt: attempt.createdAt,
+    completedAt: attempt.completedAt,
+    difficulty: attempt.difficulty,
+    topic: attempt.topic,
     details: attempt.answers.map((answer) => ({
       questionId: answer.questionId,
       selected: answer.selected,
@@ -360,7 +373,5 @@ export async function getAttemptForUser(
       correctAnswer: answer.question?.correctAnswer ?? null,
     })),
   };
-
-
 }
 

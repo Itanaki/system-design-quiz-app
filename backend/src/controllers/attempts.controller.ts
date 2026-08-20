@@ -17,6 +17,8 @@ export async function postAttempt(
     const result = await submitAttempt({
       userId: req.user?.id,
       answers: payload.answers,
+      difficulty: payload.difficulty,
+      topic: payload.topic,
     });
     
     res.status(201).json(result);
