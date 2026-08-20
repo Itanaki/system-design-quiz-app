@@ -20,12 +20,16 @@ model Question {
 }
 
 model QuizAttempt {
-    id      String      @id @default(cuid())
-    userId  String?
-    score   Int
-    total   Int
-    createdAt   DateTime @default(now())
-    answers AttemptAnswer[]
+    id          String      @id @default(cuid())
+    userId      String?
+    score       Int
+    total       Int
+    difficulty  String?
+    topic       String?
+    sessionId   String?
+    createdAt   DateTime    @default(now())
+    completedAt DateTime?
+    answers     AttemptAnswer[]
 }
 
 model AttemptAnswer {
