@@ -4,3 +4,5 @@ export { SectionsList } from './SectionsList';
 export { QuestionCard } from './QuestionCard';
 export { ResultDisplay } from './ResultDisplay';
 export { AdminQuestions } from './AdminQuestions';
+export { ProgressHistory } from './ProgressHistory';
+export { AttemptReview } from './AttemptReview';
