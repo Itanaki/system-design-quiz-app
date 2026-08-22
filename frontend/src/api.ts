@@ -250,11 +250,15 @@ export async function getQuestion(id: string): Promise<PublicQuestion> {
 
 export async function submitAttempt(
   answers: Array<{ questionId: string; selected: string }>,
+  difficulty?: string,
+  topic?: string,
 ): Promise<AttemptResult> {
   const response = await apiFetch(`/api/attempts`, {
     method: 'POST',
     body: JSON.stringify({
       answers,
+      difficulty,
+      topic,
     }),
   });
 

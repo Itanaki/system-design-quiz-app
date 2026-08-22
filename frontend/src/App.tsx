@@ -31,17 +31,20 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [currentSessionDifficulty, setCurrentSessionDifficulty] = useState<string>('');
+  const [currentSessionTopic, setCurrentSessionTopic] = useState<string>('');
 
   const currentQuestion = sessionQuestions?.[questionIndex] ?? null;
   const currentAnswer = currentQuestion ?
   answers[currentQuestion.id] ?? null
   : null;
 
-  const [view, setView] = useState<'quiz' | 'admin'>(
+  const [view, setView] = useState<'sections' | 'quiz' | 'result' | 'history' | 'review' | 'admin'>(
   window.location.pathname === '/admin/questions'
     ? 'admin'
-    : 'quiz',
+    : 'sections',
 );
+const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
   const isAdmin =
   session?.user.app_metadata?.role === 'admin';
 
@@ -55,6 +58,8 @@ function App() {
     setQuestionIndex(0);
     setAnswers({});
     setResult(null);
+    setCurrentSessionDifficulty(difficulty);
+    setCurrentSessionTopic(topic || '');
 
     try {
       const questions = await getQuizSession({
@@ -104,8 +109,11 @@ function App() {
       selected: answers[q.id],
     }));
     
-    const attemptResult = await submitAttempt(attemptAnswers);
-    setResult(attemptResult);
+    const attemptResult = await submitAttempt(
+    attemptAnswers,
+    currentSessionDifficulty,
+    currentSessionTopic,
+);
   } catch {
     setError('Failed to submit attempt');
   } finally {
