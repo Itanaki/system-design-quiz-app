@@ -1,0 +1,108 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex: 1;
+}
+
+.metadata {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.badge.easy {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+}
+
+.badge.medium {
+  background-color: #ffe0b2;
+  color: #e65100;
+}
+
+.badge.hard {
+  background-color: #ffcdd2;
+  color: #c62828;
+}
+
+.topic {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.date {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 1rem;
+}
+
+.percentage {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.fraction {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.reviewBtn {
+  padding: 0.5rem 1rem;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reviewBtn:hover {
+  background-color: #1565c0;
+}
