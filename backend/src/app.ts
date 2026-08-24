@@ -1,8 +1,8 @@
 import cors from 'cors';
 import express from 'express';
-import quizzesRouter from './routes/quizzes';
-import attemptRouter from './routes/attempt';
-import { errorHandler } from './middleware/error';
+import quizzesRouter from './routes/quizzes.js';
+import attemptRouter from './routes/attempt.js';
+import { errorHandler } from './middleware/error.js';
 
 const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 const app = express();

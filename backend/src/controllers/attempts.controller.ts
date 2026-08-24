@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { attemptSchema } from '../schemas/attempt.schema';
-import { getAttemptForUser, getAttemptsForUser, submitAttempt } from '../services/quiz.service';
+import { attemptSchema } from '../schemas/attempt.schema.js';
+import { getAttemptForUser, getAttemptsForUser, submitAttempt } from '../services/quiz.service.js';
 
 type AttemptParams = {
   id: string;

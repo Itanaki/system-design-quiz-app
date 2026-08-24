@@ -1,6 +1,6 @@
-import prisma from '../lib/prisma';
-import { ApiError } from '../utils/apiError';
-import { createQuestionSchema } from '../schemas/quiz.schemas';
+import prisma from '../lib/prisma.js';
+import { ApiError } from '../utils/apiError.js';
+import { createQuestionSchema } from '../schemas/quiz.schemas.js';
 
 type QuestionInput = {
   prompt: string;

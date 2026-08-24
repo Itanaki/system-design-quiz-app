@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import * as service from '../services/quiz.service';
-import { createQuestionSchema, updateQuestionSchema, questionListQuerySchema } from '../schemas/quiz.schemas';
+import * as service from '../services/quiz.service.js';
+import { createQuestionSchema, updateQuestionSchema, questionListQuerySchema } from '../schemas/quiz.schemas.js';
 
 export async function getSectionsController(
   _req: Request,

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import * as ctrl from '../controllers/quizzes.controller';
-import { requireAdmin } from '../middleware/auth';
+import * as ctrl from '../controllers/quizzes.controller.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
