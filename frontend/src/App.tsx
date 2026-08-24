@@ -181,18 +181,10 @@ setResult(attemptResult);
       .finally(() => setLoading(false));
   }, []);
 
-  function AuthHeader({ session, onSignOut }: { session: any; onSignOut: () => void }) {
+  function AuthHeader() {
     return (
       <div className={styles.authHeader}>
         <h2>My Progress</h2>
-        {session?.user && (
-          <div className={styles.userSection}>
-            <span>{session.user.email}</span>
-            <button onClick={onSignOut} className={styles.signOutBtn}>
-              Sign Out
-            </button>
-          </div>
-        )}
       </div>
     );
   }
@@ -221,7 +213,7 @@ setResult(attemptResult);
         
         {view === 'history' && session?.user ? (
           <>
-            <AuthHeader session={session} onSignOut={handleSignOut} />
+            <AuthHeader/>
             <ProgressHistory
               onSelectAttempt={(attemptId) => {
                 setSelectedAttemptId(attemptId);
@@ -231,7 +223,7 @@ setResult(attemptResult);
           </>
         ) : view === 'review' && session?.user && selectedAttemptId ? (
           <>
-            <AuthHeader session={session} onSignOut={handleSignOut} />
+            <AuthHeader/>
             <AttemptReview
               attemptId={selectedAttemptId}
               onBack={() => setView('history')}
@@ -253,7 +245,7 @@ setResult(attemptResult);
 
             {view === 'sections' && (
               <>
-                <AuthHeader session={session} onSignOut={handleSignOut} />
+                <AuthHeader/>
                 {session?.user && (
                   <button
                     onClick={() => setView('history')}
