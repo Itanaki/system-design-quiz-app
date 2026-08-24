@@ -116,6 +116,7 @@ const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
     currentSessionDifficulty,
     currentSessionTopic,
 );
+setResult(attemptResult);
   } catch {
     setError('Failed to submit attempt');
   } finally {
@@ -128,6 +129,7 @@ const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
   if (signOutError) {
     setError(signOutError.message);
   }
+  setView('sections');
 }
   
   function handleReset() {
