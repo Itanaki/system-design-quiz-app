@@ -119,7 +119,6 @@ export async function getSessionQuestions(
       ...(topic ? { topics: { has: topic } } : {}),
     },
     orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
-    take: 5,
   });
   return questions.map((question) => ({
     id: question.id,
