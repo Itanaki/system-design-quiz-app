@@ -22,5 +22,8 @@ export const attemptSchema = z.object({
             }
         }),
     difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
-    topic: z.string().min(1).optional(),
+    topic: z.preprocess(
+        (value) => typeof value === 'string' && value.trim() === '' ? undefined : value,
+        z.string().trim().min(1).optional(),
+    ),
 });

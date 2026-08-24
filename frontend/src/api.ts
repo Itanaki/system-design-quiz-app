@@ -253,13 +253,15 @@ export async function submitAttempt(
   difficulty?: string,
   topic?: string,
 ): Promise<AttemptResult> {
+  const payload = {
+    answers,
+    ...(difficulty ? { difficulty } : {}),
+    ...(topic?.trim() ? { topic: topic.trim() } : {}),
+  };
+
   const response = await apiFetch(`/api/attempts`, {
     method: 'POST',
-    body: JSON.stringify({
-      answers,
-      difficulty,
-      topic,
-    }),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
