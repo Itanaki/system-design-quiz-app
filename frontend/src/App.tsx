@@ -158,7 +158,19 @@ setResult(attemptResult);
 
   function returnToQuiz() {
     window.history.pushState({}, '', '/');
-    setView('quiz');
+    setView('sections');
+  }
+
+  function handleHomeClick() {
+    if (view === 'quiz' && Object.keys(answers).length > 0) {
+      if (!window.confirm('Leave this quiz? Your answers will be lost.')) {
+        return;
+      }
+    }
+    setView('sections');
+    handleReset();
+    setSelectedAttemptId(null);
+    window.history.pushState({}, '', '/');
   }
 
   useEffect(() => {
@@ -183,8 +195,11 @@ setResult(attemptResult);
 
   function AuthHeader() {
     return (
-      <div className={styles.authHeader}>
-        <h2>My Progress</h2>
+      <div className={`${styles.authHeader} ${session?.user ? styles.withBorder : ''}`}>
+        {session?.user && (
+          <h2>My Progress</h2>
+        )}
+        
       </div>
     );
   }
@@ -192,22 +207,35 @@ setResult(attemptResult);
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <h1>System Design Quiz</h1>
-        <p>Test your knowledge on system design concepts</p>
-        {session ? (
-          <div>
-            <p>Signed in as: {session.user.email}</p>
+        <div className={styles.headerTop}>
+          {view !== 'sections' && (
             <button
-              className={styles.signOutButton}
+              className={styles.homeButton}
               type="button"
-              onClick={handleSignOut}
+              onClick={handleHomeClick}
             >
-              Sign Out
+              ← Home
             </button>
-          </div>
-        ) : (
-          <button className={styles.signUpButton} onClick={() => setShowAuthModal(true)}>Sign Up / Log In</button>
-        )}
+          )}
+          {session ? (
+            <div className={styles.authControls}>
+              <p>Signed in as: {session.user.email}</p>
+              <button
+                className={styles.signOutButton}
+                type="button"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button className={styles.signUpButton} onClick={() => setShowAuthModal(true)}>Sign Up / Log In</button>
+          )}
+        </div>
+        <div className={styles.headerTitle}>
+          <h1>System Design Quiz</h1>
+          <p>Test your knowledge on system design concepts</p>
+        </div>
       </header>
       <div className={styles.content}>
         
