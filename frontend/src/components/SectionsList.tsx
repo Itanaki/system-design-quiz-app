@@ -26,7 +26,12 @@ export function SectionsList({
         <section key={difficulty} className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.difficulty}>{difficulty}</h2>
-            <p>{Object.values(section.topics).flat().length} questions</p>
+            <p>
+              {new Set(Object.values(section.topics).flatMap((questions) =>
+                questions.map((question) => question.id),
+              )).size}{' '}
+              questions
+            </p>
           </div>
 
           <button
