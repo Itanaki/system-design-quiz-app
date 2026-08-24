@@ -151,10 +151,10 @@ setResult(attemptResult);
     handleReset();
   }
 
-  function openAdminView() {
-  window.history.pushState({}, '', '/admin/questions');
-  setView('admin');
-  }
+  // function openAdminView() {
+  // window.history.pushState({}, '', '/admin/questions');
+  // setView('admin');
+  // }
 
   function returnToQuiz() {
     window.history.pushState({}, '', '/');
