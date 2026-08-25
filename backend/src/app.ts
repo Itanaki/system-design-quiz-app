@@ -4,10 +4,20 @@ import quizzesRouter from './routes/quizzes.js';
 import attemptRouter from './routes/attempt.js';
 import { errorHandler } from './middleware/error.js';
 
-const frontendOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173').split(',').map(o => o.trim());
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((o) => o.trim());
+
 const app = express();
 
-app.use(cors({ origin: frontendOrigins }));
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.use(express.json());
 
 app.use('/api/quizzes', quizzesRouter);
