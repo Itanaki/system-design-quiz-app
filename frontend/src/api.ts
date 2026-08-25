@@ -1,8 +1,5 @@
 import { supabase } from './lib/supabase';
-const API_URL =
-  import.meta.env.DEV
-    ? 'http://localhost:4000'
-    : import.meta.env.VITE_API_URL ?? 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 export type AdminQuestion = {
   id: string;
