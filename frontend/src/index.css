@@ -1,41 +1,42 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Background Colors */
+  --bg-primary: #0e0e12;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #252535;
 
+  /* Text Colors */
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  /* Accent Colors */
+  --accent-teal: #10b981;
+  --accent-cyan: #06b6d4;
+  --success: #10b981;
+  --error: #f87171;
+  --warning: #f59e0b;
+
+  /* Glow Effects */
+  --glow-teal: rgba(16, 185, 129, 0.3);
+  --glow-teal-intense: rgba(16, 185, 129, 0.5);
+  --glow-cyan: rgba(6, 182, 212, 0.3);
+  --glow-error: rgba(248, 113, 113, 0.3);
+
+  /* Typography */
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --mono: ui-monospace, 'Courier New', monospace;
 
-  font: 18px / 145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  /* Base Styles */
+  font: 16px / 1.5 var(--mono);
+  letter-spacing: 0.16px;
+  color-scheme: dark;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-  }
 }
 
 * {
@@ -45,6 +46,8 @@
 body {
   margin: 0;
   padding: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 html,
@@ -55,32 +58,143 @@ body,
 
 h1,
 h2,
-h3 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--sans);
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 h1 {
-  font-size: 48px;
-  letter-spacing: -1.44px;
+  font-size: 36px;
 }
 
 h2 {
   font-size: 28px;
-  letter-spacing: -0.84px;
 }
 
 h3 {
-  font-size: 18px;
-  letter-spacing: -0.36px;
-}
-
-p {
-  margin: 0;
-  line-height: 1.6;
+  font-size: 20px;
 }
 
 button {
-  font-family: inherit;
+  cursor: pointer;
+  font-family: var(--mono);
+  border: none;
+  background: transparent;
+}
+
+input,
+textarea,
+select {
+  font-family: var(--mono);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--glow-teal);
+  border-radius: 4px;
+  padding: 8px 12px;
+  transition: all 250ms ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 20px var(--glow-teal-intense);
+}
+
+/* Glow Utilities */
+.glow-teal {
+  border: 1px solid var(--glow-teal);
+  box-shadow: 0 0 20px var(--glow-teal);
+  transition: all 250ms ease;
+}
+
+.glow-teal:hover,
+.glow-teal:focus-within {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 30px var(--glow-teal-intense);
+}
+
+.glow-cyan {
+  border: 1px solid var(--glow-cyan);
+  box-shadow: 0 0 20px var(--glow-cyan);
+  transition: all 250ms ease;
+}
+
+.glow-cyan:hover,
+.glow-cyan:focus-within {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+}
+
+.glow-error {
+  border: 1px solid var(--glow-error);
+  box-shadow: 0 0 20px var(--glow-error);
+  transition: all 250ms ease;
+}
+
+.glow-error:hover,
+.glow-error:focus-within {
+  border-color: var(--error);
+  box-shadow: 0 0 30px rgba(248, 113, 113, 0.5);
+}
+
+/* Glow Pulse Animation */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--glow-teal);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--glow-teal-intense);
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Fade In Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fade-in 250ms ease forwards;
+}
+
+/* Slide Up Animation */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slide-up 250ms ease forwards;
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

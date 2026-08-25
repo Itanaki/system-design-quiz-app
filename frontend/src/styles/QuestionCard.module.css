@@ -3,9 +3,17 @@
   flex-direction: column;
   gap: 24px;
   padding: 32px;
-  background: var(--code-bg);
+  background: var(--bg-secondary);
   border-radius: 8px;
-  border: 2px solid var(--accent-border);
+  border: 1px solid var(--glow-teal);
+  box-shadow: 0 0 20px var(--glow-teal);
+  transition: all 250ms ease;
+  animation: fade-in 250ms ease forwards;
+}
+
+.card:hover {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 30px var(--glow-teal-intense);
 }
 
 .header {
@@ -14,17 +22,34 @@
   gap: 12px;
 }
 
+.progress {
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glow-teal);
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
 .difficulty {
   display: inline-block;
   width: fit-content;
   padding: 4px 12px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-teal);
+  border: 1px solid var(--glow-teal);
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: var(--mono);
+  box-shadow: 0 0 10px var(--glow-teal);
 }
 
 .topics {
@@ -36,18 +61,23 @@
 .topic {
   display: inline-block;
   padding: 4px 12px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid var(--glow-cyan);
   border-radius: 4px;
   font-size: 13px;
   text-transform: capitalize;
+  font-family: var(--mono);
+  box-shadow: 0 0 8px var(--glow-cyan);
 }
 
 .prompt {
   margin: 0;
-  font-size: 28px;
-  line-height: 1.4;
-  color: var(--text-h);
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  font-family: var(--mono);
+  font-weight: 600;
 }
 
 .options {
@@ -61,31 +91,41 @@
   cursor: pointer;
   padding: 16px 20px;
   text-align: left;
-  background: var(--bg);
-  border: 2px solid var(--border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--glow-teal);
   border-radius: 6px;
-  font-size: 16px;
-  transition: all 0.2s ease;
-  color: var(--text);
+  font-size: 14px;
+  font-family: var(--mono);
+  transition: all 250ms ease;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
+  box-shadow: 0 0 15px var(--glow-teal);
 }
 
 .optionButton:hover:not(:disabled) {
-  border-color: var(--accent);
-  background: var(--accent-bg);
+  border-color: var(--accent-teal);
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 25px var(--glow-teal-intense);
+  color: var(--accent-teal);
 }
 
 .optionButton:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-teal);
   outline-offset: 2px;
 }
 
 .optionButton.selected {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-  color: var(--text-h);
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--accent-teal);
+  color: var(--accent-teal);
   font-weight: 600;
+  box-shadow: 0 0 25px var(--glow-teal-intense);
+}
+
+.optionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .optionText {
@@ -140,32 +180,37 @@
 
 .progress {
   margin-bottom: 1rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
+  font-family: var(--mono);
 }
 
 .backButton {
   align-self: flex-start;
   min-height: 2.75rem;
   padding: 0.65rem 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.5rem;
-  background: #f8fafc;
-  color: #1e293b;
+  border: 1px solid var(--glow-teal);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--accent-teal);
   cursor: pointer;
-  font: inherit;
+  font-family: var(--mono);
   font-weight: 600;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 250ms ease;
+  box-shadow: 0 0 10px var(--glow-teal);
 }
 
 .backButton:hover:not(:disabled) {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--accent-teal);
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 20px var(--glow-teal-intense);
 }
 
 .backButton:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--accent-teal);
   outline-offset: 2px;
 }
 
@@ -185,21 +230,38 @@
 .submitButton {
   min-height: 2.75rem;
   padding: 0.75rem 1rem;
-  border: 0;
-  border-radius: 0.5rem;
+  border: 1px solid var(--glow-teal);
+  border-radius: 6px;
   cursor: pointer;
-  font: inherit;
+  font-family: var(--mono);
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 250ms ease;
 }
 
 .navigationButton {
-  background: #e2e8f0;
-  color: #1e293b;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  box-shadow: 0 0 10px var(--glow-teal);
+}
+
+.navigationButton:hover:not(:disabled) {
+  border-color: var(--accent-teal);
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 20px var(--glow-teal-intense);
 }
 
 .submitButton {
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--bg-secondary);
+  color: var(--accent-teal);
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 15px var(--glow-teal);
+}
+
+.submitButton:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 25px var(--glow-teal-intense);
 }
 
 .navigationButton:disabled,

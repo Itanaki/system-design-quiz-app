@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+  animation: fade-in 250ms ease forwards;
 }
 
 .section {
@@ -9,16 +10,25 @@
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-  background: var(--code-bg);
+  background: var(--bg-secondary);
   border-radius: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glow-teal);
+  box-shadow: 0 0 20px var(--glow-teal);
+  transition: all 250ms ease;
+}
+
+.section:hover {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 30px var(--glow-teal-intense);
 }
 
 .difficulty {
   margin: 0;
   font-size: 28px;
   text-transform: capitalize;
-  color: var(--text-h);
+  color: var(--accent-teal);
+  font-family: var(--mono);
+  font-weight: 600;
 }
 
 .topicsGrid {
@@ -31,13 +41,26 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glow-cyan);
+  border-radius: 6px;
+  box-shadow: 0 0 15px var(--glow-cyan);
+  transition: all 250ms ease;
+}
+
+.topicGroup:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.5);
 }
 
 .topicName {
   margin: 0;
   font-size: 18px;
   text-transform: capitalize;
-  color: var(--accent);
+  color: var(--accent-cyan);
+  font-family: var(--mono);
+  font-weight: 600;
 }
 
 .questionsList {
@@ -51,24 +74,28 @@
   cursor: pointer;
   padding: 12px 16px;
   text-align: left;
-  background: var(--bg);
-  border: 2px solid var(--border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--glow-teal);
   border-radius: 6px;
   font-size: 14px;
-  transition: all 0.2s ease;
-  color: var(--text-h);
+  font-family: var(--mono);
+  transition: all 250ms ease;
+  color: var(--text-primary);
   white-space: normal;
   word-wrap: break-word;
   line-height: 1.4;
+  box-shadow: 0 0 10px var(--glow-teal);
 }
 
 .questionButton:hover {
-  border-color: var(--accent);
-  background: var(--accent-bg);
+  border-color: var(--accent-teal);
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 20px var(--glow-teal-intense);
+  color: var(--accent-teal);
 }
 
 .questionButton:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-teal);
   outline-offset: 2px;
 }
 

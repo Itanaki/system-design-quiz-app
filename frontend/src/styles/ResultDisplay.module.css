@@ -3,19 +3,30 @@
   flex-direction: column;
   gap: 24px;
   padding: 32px;
-  background: var(--code-bg);
+  background: var(--bg-secondary);
   border-radius: 8px;
-  border: 2px solid var(--accent-border);
+  border: 1px solid var(--glow-teal);
+  box-shadow: 0 0 30px var(--glow-teal);
+  transition: all 250ms ease;
+  animation: fade-in 250ms ease forwards;
 }
 
 .scoreCard {
   text-align: center;
+  padding: 24px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glow-teal);
+  border-radius: 8px;
+  box-shadow: 0 0 20px var(--glow-teal);
 }
 
 .scoreTitle {
   margin: 0 0 24px 0;
-  font-size: 28px;
-  color: var(--text-h);
+  font-size: 24px;
+  color: var(--accent-teal);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .scoreDisplay {
@@ -26,30 +37,42 @@
 }
 
 .scoreCircle {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  background: var(--accent-bg);
-  border: 3px solid var(--accent);
+  background: var(--bg-secondary);
+  border: 2px solid var(--accent-teal);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 30px var(--glow-teal-intense);
+  transition: all 250ms ease;
+}
+
+.scoreCircle:hover {
+  box-shadow: 0 0 40px var(--glow-teal-intense), 0 0 60px rgba(16, 185, 129, 0.3);
+  transform: scale(1.05);
 }
 
 .percentage {
-  font-size: 48px;
+  font-size: 52px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-teal);
+  font-family: var(--mono);
+  line-height: 1;
 }
 
 .scoreText {
   margin: 0;
-  font-size: 18px;
-  color: var(--text);
+  font-size: 14px;
+  font-family: var(--mono);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .scoreText > strong {
-  color: var(--text-h);
+  color: var(--accent-teal);
   font-weight: 600;
 }
 
@@ -66,28 +89,31 @@
   padding: 16px;
   border-radius: 6px;
   border-left: 4px solid;
+  border: 1px solid;
+  background: var(--bg-tertiary);
+  font-family: var(--mono);
+  font-size: 13px;
+  transition: all 250ms ease;
 }
 
 .correct {
-  background: #efe;
-  border-color: #0a0;
+  border-color: var(--success);
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.correct:hover {
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
 }
 
 .incorrect {
-  background: #fee;
-  border-color: #a00;
+  border-color: var(--error);
+  background: rgba(248, 113, 113, 0.1);
+  box-shadow: 0 0 15px var(--glow-error);
 }
 
-@media (prefers-color-scheme: dark) {
-  .correct {
-    background: #141;
-    border-color: #4a4;
-  }
-
-  .incorrect {
-    background: #421;
-    border-color: #a44;
-  }
+.incorrect:hover {
+  box-shadow: 0 0 25px rgba(248, 113, 113, 0.5);
 }
 
 .detailHeader {
@@ -98,6 +124,53 @@
 }
 
 .status {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 20px;
+}
+
+.correct .status {
+  color: var(--success);
+}
+
+.incorrect .status {
+  color: var(--error);
+}
+
+.selected {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.selected strong {
+  color: var(--accent-teal);
+}
+
+.correctAnswer {
+  margin: 4px 0 0 0;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.15);
+  border-left: 2px solid var(--success);
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.correctAnswer strong {
+  color: var(--success);
+}
+
+.explanation {
+  margin: 8px 0 0 0;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glow-cyan);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.5;
+  font-style: italic;
   font-size: 20px;
   font-weight: 700;
   flex-shrink: 0;
@@ -146,23 +219,30 @@
 .nextButton {
   all: unset;
   cursor: pointer;
-  padding: 16px 24px;
-  background: var(--accent);
-  color: var(--bg);
+  padding: 12px 24px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent-teal);
+  color: var(--accent-teal);
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 14px;
+  font-family: var(--mono);
   font-weight: 600;
   text-align: center;
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 250ms ease;
+  box-shadow: 0 0 15px var(--glow-teal);
 }
 
 .nextButton:hover {
-  opacity: 0.9;
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 25px var(--glow-teal-intense);
+  background: rgba(16, 185, 129, 0.1);
   transform: translateY(-2px);
 }
 
 .nextButton:focus-visible {
-  outline: 2px solid var(--accent-border);
+  outline: 2px solid var(--accent-teal);
   outline-offset: 2px;
 }
 

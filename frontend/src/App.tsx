@@ -233,7 +233,7 @@ setResult(attemptResult);
           )}
         </div>
         <div className={styles.headerTitle}>
-          <h1>System Design Quiz</h1>
+          <h1>SysQuiz</h1>
           <p>Test your knowledge on system design concepts</p>
         </div>
       </header>
