@@ -251,9 +251,11 @@ export async function submitAttempt(
   answers: Array<{ questionId: string; selected: string }>,
   difficulty?: string,
   topic?: string,
+  questionIds: string[] = [],
 ): Promise<AttemptResult> {
   const payload = {
     answers,
+    questionIds,
     ...(difficulty ? { difficulty } : {}),
     ...(topic?.trim() ? { topic: topic.trim() } : {}),
   };
@@ -315,4 +317,16 @@ export async function abandonAttempt(attemptId: string): Promise<void>{
   if (!response.ok) {
     throw new Error('Unable to abandon attempt');
   }
+}
+
+export async function getIncompleteAttempt(
+  difficulty: string,
+  topic?: string,
+): Promise<AttemptResult | null> {
+  const params = new URLSearchParams({ difficulty });
+  if (topic) params.set('topic', topic);
+
+  const response = await apiFetch(`/api/attempts/incomplete?${params}`);
+  if (!response.ok) return null;
+  return response.json();
 }
