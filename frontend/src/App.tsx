@@ -21,6 +21,8 @@ import styles from './App.module.css';
 import { supabase } from './lib/supabase';
 import { AuthForm } from './components/AuthForm';
 import { signOut } from './auth';
+import { abandonAttempt } from './api';
+import { API_URL } from './api';
 
 function App() {
   const [session, setSession] = 
@@ -35,6 +37,7 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentSessionDifficulty, setCurrentSessionDifficulty] = useState<string>('');
   const [currentSessionTopic, setCurrentSessionTopic] = useState<string>('');
+  const [currentAttemptId, setCurrentAttemptId] = useState<string | null>(null);
 
   const currentQuestion = sessionQuestions?.[questionIndex] ?? null;
   const currentAnswer = currentQuestion ?
@@ -64,6 +67,12 @@ const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
     setCurrentSessionTopic(topic || '');
 
     try {
+      const result = await submitAttempt(
+        [],
+        difficulty,
+        topic,
+      );
+      setCurrentAttemptId(result.attemptId);
       const questions = await getQuizSession({
         difficulty,
         topic,
@@ -203,6 +212,31 @@ setResult(attemptResult);
       </div>
     );
   }
+
+  useEffect(() => {
+    if (!currentAttemptId || view !== "quiz")
+      return;
+
+    const handleBeforeUnload = () => {
+      navigator.sendBeacon(`${API_URL}/api/attempts/${currentAttemptId}/abandon`);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        fetch(`${API_URL}/api/attempts/${currentAttemptId}/abandon`, {
+          method: 'PATCH',
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [currentAttemptId, view]);
 
   return (
     <main className={styles.main}>
