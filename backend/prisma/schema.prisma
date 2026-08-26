@@ -27,6 +27,7 @@ model QuizAttempt {
     difficulty  String?
     topic       String?
     sessionId   String?
+    status      String      @default("in_progress")
     createdAt   DateTime    @default(now())
     completedAt DateTime?
     answers     AttemptAnswer[]
