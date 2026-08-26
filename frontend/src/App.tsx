@@ -16,13 +16,11 @@ import {
   getSections,
   getQuizSession,
   submitAttempt,
-  getIncompleteAttempt,
 } from './api';
 import styles from './App.module.css';
 import { supabase } from './lib/supabase';
 import { AuthForm } from './components/AuthForm';
 import { signOut } from './auth';
-import { API_URL } from './api';
 
 function App() {
   const [session, setSession] = 
@@ -37,9 +35,6 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentSessionDifficulty, setCurrentSessionDifficulty] = useState<string>('');
   const [currentSessionTopic, setCurrentSessionTopic] = useState<string>('');
-  const [currentAttemptId, setCurrentAttemptId] = useState<string | null>(null);
-  const [showResumeModal, setShowResumeModal] = useState(false);
-  const [resumeAttempt, setResumeAttempt] = useState<AttemptResult | null>(null);
 
   const currentQuestion = sessionQuestions?.[questionIndex] ?? null;
   const currentAnswer = currentQuestion ?
@@ -69,35 +64,10 @@ const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
     setCurrentSessionTopic(topic || '');
 
     try {
-      const incomplete = await getIncompleteAttempt(difficulty, topic);
-
-      if (incomplete) {
-        setResumeAttempt(incomplete);
-        setShowResumeModal(true);
-        setLoading(false);
-        return;
-      }
-
-      const result = await submitAttempt(
-        [],
-        difficulty,
-        topic,
-      );
-      setCurrentAttemptId(result.attemptId);
       const questions = await getQuizSession({
         difficulty,
         topic,
       });
-
-      const questionIds = questions.map(q => q.id);
-      
-      const attemptResult = await submitAttempt (
-        [],
-        difficulty,
-        topic,
-        questionIds,
-      );
-      setCurrentAttemptId(attemptResult.attemptId);
       setSessionQuestions(questions);
     } catch {
       setSessionQuestions(null);
@@ -186,40 +156,6 @@ setResult(attemptResult);
   // setView('admin');
   // }
 
-  async function handleResumeQuiz() {
-  if (!resumeAttempt) return;
-
-  try {
-    setCurrentAttemptId(resumeAttempt.attemptId);
-    
-    // Restore state
-    const questions = await getQuizSession({
-      difficulty: resumeAttempt.difficulty || '',
-      topic: resumeAttempt.topic || '',
-    });
-    
-    setSessionQuestions(questions);
-    
-    // Restore answers
-    const restoredAnswers: Record<string, string> = {};
-    resumeAttempt.details.forEach((detail) => {
-      restoredAnswers[detail.questionId] = detail.selected;
-    });
-    setAnswers(restoredAnswers);
-    
-    setView('quiz');
-    setShowResumeModal(false);
-  } catch {
-    setError('Failed to resume quiz');
-  }
-}
-
-function handleStartNewQuiz() {
-  setShowResumeModal(false);
-  setResumeAttempt(null);
-  handleStartSession(resumeAttempt!.difficulty || '', resumeAttempt?.topic || undefined);
-}
-
   function returnToQuiz() {
     window.history.pushState({}, '', '/');
     setView('sections');
@@ -267,31 +203,6 @@ function handleStartNewQuiz() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (!currentAttemptId || view !== "quiz")
-      return;
-
-    const handleBeforeUnload = () => {
-      navigator.sendBeacon(`${API_URL}/api/attempts/${currentAttemptId}/abandon`);
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        fetch(`${API_URL}/api/attempts/${currentAttemptId}/abandon`, {
-          method: 'PATCH',
-        });
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [currentAttemptId, view]);
 
   return (
     <main className={styles.main}>
@@ -406,21 +317,6 @@ function handleStartNewQuiz() {
           </>
         )}
 </div>
-  {showResumeModal && resumeAttempt && (
-          <div className={styles.modal}>
-            <div className={styles.modalContent}>
-              <h3>Resume Previous Quiz?</h3>
-              <p>
-                You have an incomplete quiz from{' '}
-                {new Date(resumeAttempt.createdAt!).toLocaleDateString()}
-              </p>
-              <div className={styles.modalButtons}>
-                <button onClick={handleResumeQuiz}>Resume</button>
-                <button onClick={handleStartNewQuiz}>Start New</button>
-              </div>
-            </div>
-          </div>
-        )}
       <AuthForm isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} session={session} />
     </main>
   );

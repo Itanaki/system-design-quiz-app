@@ -230,23 +230,18 @@ export async function submitAttempt(payload: {
   }>;
   difficulty?: string;
   topic?: string;
-  questionIds?: string[];
 }) {
-  const { userId, answers, difficulty, topic, questionIds = [] } = payload;
-
-  const allQuestionsIds = questionIds.length > 0 
-  ? questionIds 
-  : answers.map((a) => a.questionId);
-  
+  const { userId, answers, difficulty, topic } = payload;
+  const questionIds = answers.map((a) => a.questionId);
   const questions = await prisma.question.findMany({
     where: { 
       id: { 
-        in: allQuestionsIds
+        in: questionIds 
       }, 
     },
   });
 
-  if (questions.length !== allQuestionsIds.length) {
+  if (questions.length !== questionIds.length) {
     throw new Error('One or more questions were not found');
   }
 
@@ -287,7 +282,6 @@ export async function submitAttempt(payload: {
       total,
       difficulty: difficulty ?? null,
       topic: topic ?? null,
-      questionIds: allQuestionsIds,
       completedAt: new Date(),
       answers: {
         create: evaluatedAnswers, 
@@ -380,27 +374,3 @@ export async function getAttemptForUser(
   };
 }
 
-export async function getIncompleteAttempt(
-  userId: string | undefined,
-  difficulty: string,
-  topic?: string,
-) {
-  const attempt = await prisma.quizAttempt.findFirst({
-    where: {
-      userId,
-      status: 'abandon',
-      difficulty,
-      topic: topic || null,
-    },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      answers:{
-        select:{
-          questionId: true, 
-          selected: true
-        },
-      },
-    },
-  });
-  return attempt;
-}
