@@ -5,6 +5,7 @@ import { optionalAuth, requireAuth } from '../middleware/auth.js';
 const router = Router();
 
 router.post('/', optionalAuth, ctrl.postAttempt);
+router.patch('/:id/abandon', optionalAuth, ctrl.abandonAttempt);
 router.get('/', requireAuth, ctrl.getAttemptHistory);
 router.get('/:id', requireAuth, ctrl.getAttemptDetails);
 

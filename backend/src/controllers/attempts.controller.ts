@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { attemptSchema } from '../schemas/attempt.schema.js';
 import { getAttemptForUser, getAttemptsForUser, submitAttempt } from '../services/quiz.service.js';
+import { abandonAttempt } from '../services/attempt.service.js';
 
 type AttemptParams = {
   id: string;
@@ -60,6 +61,28 @@ export async function getAttemptDetails(
       return;
     }
 
+    res.json(attempt);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function abandonAttemptController(
+  req: Request<AttemptParams>,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.params;
+    
+    if (!id) {
+      res.status(400).json({
+        message: 'Invalid attempt ID'
+      });
+      return;
+    }
+
+    const attempt = await abandonAttempt(id);
     res.json(attempt);
   } catch (err) {
     next(err);

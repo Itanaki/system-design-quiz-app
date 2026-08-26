@@ -304,3 +304,15 @@ export async function getAttemptDetails(
 
   return response.json();
 }
+
+export async function abandonAttempt(attemptId: string): Promise<void>{
+  const response = await fetch(`${API_URL}/api/attempts/${attemptId}/abandon`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Unable to abandon attempt');
+  }
+}
