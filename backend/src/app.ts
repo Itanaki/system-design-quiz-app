@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import quizzesRouter from './routes/quizzes.js';
 import attemptRouter from './routes/attempt.js';
+import leaderboardRouter from './routes/leaderboard.js';
 import { errorHandler } from './middleware/error.js';
 
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || 'http://localhost:5173')
@@ -22,6 +23,7 @@ app.use(express.json());
 
 app.use('/api/quizzes', quizzesRouter);
 app.use('/api/attempts', attemptRouter);
+app.use('/api/leaderboard', leaderboardRouter);
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 app.use(errorHandler);
