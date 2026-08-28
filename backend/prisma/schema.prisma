@@ -17,6 +17,9 @@ model Question {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     AttemptAnswer AttemptAnswer[]
+    mastery     UserQuestionMastery[]
+
+    @@index([difficulty])
 }
 
 model QuizAttempt {
@@ -42,4 +45,28 @@ model AttemptAnswer {
     question    Question?   @relation(fields: [questionId], references: [id])
     @@index([attemptId])
     @@index([questionId])
+}
+
+model UserProfile {
+    id                 String   @id
+    displayName        String
+    leaderboardOptOut  Boolean  @default(false)
+    status             String   @default("active")
+    createdAt          DateTime @default(now())
+    updatedAt          DateTime @updatedAt
+}
+
+model UserQuestionMastery {
+    id             String    @id @default(cuid())
+    userId         String
+    questionId     String
+    bestCorrect    Boolean   @default(false)
+    firstCorrectAt DateTime?
+    lastAttemptAt  DateTime
+    attemptCount   Int       @default(1)
+    question       Question  @relation(fields: [questionId], references: [id])
+
+    @@unique([userId, questionId])
+    @@index([userId, bestCorrect])
+    @@index([questionId, bestCorrect])
 }
