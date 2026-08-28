@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import prisma from '../lib/prisma.js';
 import { ApiError } from '../utils/apiError.js';
 import { createQuestionSchema } from '../schemas/quiz.schemas.js';
@@ -273,21 +274,32 @@ export async function submitAttempt(payload: {
 
   const score = evaluatedAnswers.filter((a)=> a.correct).length;
   const total = evaluatedAnswers.length;
+  const now = new Date();
 
   // create attempt and nested answers
-  const attempt = await prisma.quizAttempt.create({
-    data: {
-      userId,
-      score, 
-      total,
-      difficulty: difficulty ?? null,
-      topic: topic ?? null,
-      completedAt: new Date(),
-      answers: {
-        create: evaluatedAnswers, 
+  const attempt = await prisma.$transaction(async (tx) => {
+    const created = await tx.quizAttempt.create({
+      data: {
+        userId,
+        score,
+        total,
+        difficulty: difficulty ?? null,
+        topic: topic ?? null,
+        completedAt: now,
+        answers: {
+          create: evaluatedAnswers,
+        },
       },
-    },
-    include: { answers: true },
+      include: { answers: true },
+    });
+
+    if (userId) {
+      for (const answer of evaluatedAnswers) {
+        await upsertMastery(tx, userId, answer.questionId, answer.correct, now);
+      }
+    }
+
+    return created;
   });
   
   // build detailed feedback
@@ -310,6 +322,65 @@ export async function submitAttempt(payload: {
   };
 }
 
+async function upsertMastery(
+  tx: Prisma.TransactionClient,
+  userId: string,
+  questionId: string,
+  isCorrect: boolean,
+  now: Date,
+) {
+  const existing = await tx.userQuestionMastery.findUnique({
+    where: {userId_questionId: {userId, questionId} },
+});
+
+if (!existing) {
+    try {
+      await tx.userQuestionMastery.create({
+        data: {
+          userId,
+          questionId,
+          bestCorrect: isCorrect,
+          firstCorrectAt: isCorrect ? now : null,
+          lastAttemptAt: now,
+          attemptCount: 1,
+        },
+      });
+    } catch (error: unknown) {
+      const isUniqueConstraintError =
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        error.code === 'P2002';
+
+      if (!isUniqueConstraintError) {
+        throw error;
+      }
+
+      // lost a create race to a concurrent submission; fall back to update
+      await tx.userQuestionMastery.update({
+        where: { userId_questionId: { userId, questionId } },
+        data: {
+          lastAttemptAt: now,
+          attemptCount: { increment: 1 },
+          ...(isCorrect ? { bestCorrect: true } : {}),
+        },
+      });
+    }
+    return;
+  }
+
+  await tx.userQuestionMastery.update({
+    where: { userId_questionId: { userId, questionId } },
+    data: {
+      lastAttemptAt: now,
+      attemptCount: { increment: 1 },
+      // best-result only ever upgrades to correct, never downgrades
+      ...(!existing.bestCorrect && isCorrect
+        ? { bestCorrect: true, firstCorrectAt: now }
+        : {}),
+    },
+  });
+}
 // get all attempts for user
 export async function getAttemptsForUser(userId: string) {
   const attempts = await prisma.quizAttempt.findMany({

@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { supabase } from '../lib/supabase.js';
+import { ensureUserProfile } from '../services/profile.service.js';
 
 export async function optionalAuth(
     req: Request,
@@ -28,6 +29,13 @@ export async function optionalAuth(
     }
 
     req.user = data.user;
+    
+    try {
+      await ensureUserProfile(data.user);
+    } catch (profileError) {
+      console.error('Failed to ensure user profile:', profileError);
+    }
+
     next();
 }
 
