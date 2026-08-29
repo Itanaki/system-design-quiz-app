@@ -8,6 +8,7 @@ import {
   AdminQuestions,
   ProgressHistory,
   AttemptReview,
+  Leaderboard,
 } from './components';
 import {
   type QuizSections,
@@ -41,7 +42,7 @@ function App() {
   answers[currentQuestion.id] ?? null
   : null;
 
-  const [view, setView] = useState<'sections' | 'quiz' | 'result' | 'history' | 'review' | 'admin'>(
+  const [view, setView] = useState<'sections' | 'quiz' | 'result' | 'history' | 'review' | 'admin' | 'leaderboard'>(
   window.location.pathname === '/admin/questions'
     ? 'admin'
     : 'sections',
@@ -249,7 +250,13 @@ setResult(attemptResult);
               }}
             />
           </>
-        ) : view === 'review' && session?.user && selectedAttemptId ? (
+        ) : view === 'leaderboard' ? (
+          <>
+            <AuthHeader/>
+            <Leaderboard currentUserId={session?.user?.id} />
+          </>
+        )
+        : view === 'review' && session?.user && selectedAttemptId ? (
           <>
             <AuthHeader/>
             <AttemptReview
@@ -282,6 +289,12 @@ setResult(attemptResult);
                     My History
                   </button>
                 )}
+                <button
+                  onClick={() => setView('leaderboard')}
+                  className={styles.historyBtn}
+                >
+                  Leaderboard
+                </button>
                 {sections && !sessionQuestions && !result && (
                 <SectionsList
                 sections={sections}

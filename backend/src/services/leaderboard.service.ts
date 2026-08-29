@@ -106,12 +106,19 @@ async function queryRanked(
             JOIN "Question" q ON q."id" = m."questionId" ${difficultyFilter}
             WHERE p."status" = 'active' AND p."leaderboardOptOut" = false
             GROUP BY p."id", p."displayName"
+        ),
+        -- masteryPercentage must be materialized in its own CTE: a window function's
+        -- ORDER BY can't reference an alias defined in the same SELECT list
+        withPercentage AS (
+            SELECT
+                *,
+                ROUND((100.0 * "weightedPoints") / NULLIF(${availablePoints}::numeric, 0), 2)::float8 AS "masteryPercentage"
+            FROM scored
         )
         SELECT
             *,
-            ROUND((100.0 * "weightedPoints") / NULLIF(${availablePoints}::numeric, 0), 2)::float8 AS "masteryPercentage",
             (ROW_NUMBER() OVER (ORDER BY ${tieBreak}))::int AS "rank"
-        FROM scored
+        FROM withPercentage
         ORDER BY ${tieBreak}
         ${paginationSql}
     `;

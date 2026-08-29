@@ -304,3 +304,75 @@ export async function getAttemptDetails(
 
   return response.json();
 }
+
+export type LeaderboardScope = 'global' | 'easy' | 'medium' | 'hard';
+
+export type LeaderboardEntry = {
+  rank: number;
+  userId: string;
+  displayName: string;
+  masteryPercentage: number;
+  weightedPointsEarned: number;
+  uniqueCorrect: number;
+  easyCorrect: number;
+  mediumCorrect: number;
+  hardCorrect: number;
+  scoreReachedAt: string | null;
+};
+
+export type LeaderboardResponse = {
+  scope: { type: LeaderboardScope };
+  entries: LeaderboardEntry[];
+  weightedPointsAvailable: number;
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalEntries: number;
+    totalPages: number;
+  };
+};
+
+export type MyRank = {
+  rank: number | null;
+  masteryPercentage: number;
+  weightedPointsEarned: number;
+  weightedPointsAvailable: number;
+  uniqueCorrect: number;
+};
+
+export async function getLeaderboard(
+  scope: LeaderboardScope,
+  page = 1,
+  pageSize = 20,
+): Promise<LeaderboardResponse> {
+  const params = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+  });
+
+  const path =
+    scope === 'global'
+      ? '/api/leaderboard/global'
+      : `/api/leaderboard/difficulty/${scope}`;
+
+  const response = await apiFetch(`${path}?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(await getApiError(response));
+  }
+
+  return response.json();
+}
+
+export async function getMyLeaderboardRank(
+  scope: LeaderboardScope,
+): Promise<MyRank> {
+  const params = new URLSearchParams({ scope });
+  const response = await apiFetch(`/api/leaderboard/me?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(await getApiError(response));
+  }
+
+  return response.json();
+}

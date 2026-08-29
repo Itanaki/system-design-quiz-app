@@ -14,6 +14,7 @@ interface AuthFormProps {
 export function AuthForm({ isOpen, onClose, session }: AuthFormProps){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [displayName, setDisplayName] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -24,7 +25,13 @@ export function AuthForm({ isOpen, onClose, session }: AuthFormProps){
         setError(null);
 
         const result = isSignUp
-            ? await supabase.auth.signUp({ email, password })
+            ? await supabase.auth.signUp({ email, password,
+                options: {
+                    data: {
+                        display_name: displayName.trim()
+                    }
+                },
+             })
             : await signIn(email, password);
 
         if (result.error){
@@ -56,6 +63,15 @@ export function AuthForm({ isOpen, onClose, session }: AuthFormProps){
                     {error && <div className={styles.error}>{error}</div>}
 
                     <form className={styles.form} onSubmit={handleSubmit}>
+                        <input
+                                className={styles.input}
+                                type="text"
+                                placeholder="Display name"
+                                value={displayName}
+                                onChange={(event) => setDisplayName(event.target.value)}
+                                maxLength={40}
+                                required
+                            />
                         <input
                             className={styles.input}
                             type="email"

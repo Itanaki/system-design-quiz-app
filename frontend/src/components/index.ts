@@ -6,3 +6,4 @@ export { ResultDisplay } from './ResultDisplay';
 export { AdminQuestions } from './AdminQuestions';
 export { ProgressHistory } from './ProgressHistory';
 export { AttemptReview } from './AttemptReview';
+export { Leaderboard } from './Leaderboard';
