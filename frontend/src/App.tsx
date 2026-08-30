@@ -281,20 +281,22 @@ setResult(attemptResult);
             {view === 'sections' && (
               <>
                 <AuthHeader/>
-                {session?.user && (
+                <div className={styles.progressNav}>
+                  {session?.user && (
+                    <button
+                      onClick={() => setView('history')}
+                      className={styles.historyBtn}
+                    >
+                      My History
+                    </button>
+                  )}
                   <button
-                    onClick={() => setView('history')}
+                    onClick={() => setView('leaderboard')}
                     className={styles.historyBtn}
                   >
-                    My History
+                    Leaderboard
                   </button>
-                )}
-                <button
-                  onClick={() => setView('leaderboard')}
-                  className={styles.historyBtn}
-                >
-                  Leaderboard
-                </button>
+                </div>
                 {sections && !sessionQuestions && !result && (
                 <SectionsList
                 sections={sections}

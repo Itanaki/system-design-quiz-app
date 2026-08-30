@@ -133,6 +133,12 @@
   align-items: center;
 }
 
+.progressNav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 /* Content Area */
 .content {
   flex: 1;
