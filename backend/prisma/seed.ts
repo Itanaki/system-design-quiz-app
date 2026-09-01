@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import prisma from '../src/lib/prisma';
 
 type QuestionSeed = {
@@ -257,6 +258,86 @@ for (const question of questions) {
     where: { prompt: question.prompt },
     update: question,
     create: question,
+  });
+}
+
+
+const easyQuestionPrompts = new Set(
+  questions
+    .filter((question) => question.difficulty === 'easy')
+    .map((question) => question.prompt),
+);
+
+const easyQuestions = await prisma.question.findMany({
+  where: {
+    prompt: {
+      in: [...easyQuestionPrompts],
+    },
+  },
+  orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+});
+
+const easyBadge = await prisma.badge.upsert({
+  where: {
+    id: 'badge-easy-foundations',
+  },
+  update: {
+    displayName: 'Easy Foundations',
+    description: 'Master every question in the Easy Foundations milestone.',
+    category: 'MASTERY',
+    isActive: true,
+  },
+  create: {
+    id: 'badge-easy-foundations',
+    displayName: 'Easy Foundations',
+    description: 'Master every question in the Easy Foundations milestone.',
+    category: 'MASTERY',
+    isActive: true,
+  },
+});
+
+const existingMilestone = await prisma.milestone.findUnique({
+  where: {
+    key_version: {
+      key: 'easy-foundations',
+      version: 1,
+    },
+  },
+});
+
+if (!existingMilestone) {
+  const publishedAt = new Date();
+
+ const milestoneQuestions = easyQuestions.map((question) => {
+  if (!Array.isArray(question.options)) {
+    throw new Error(
+      `Question ${question.id} has invalid options and cannot be snapshotted`,
+    );
+  }
+
+  return {
+    questionId: question.id,
+    prompt: question.prompt,
+    options: question.options,
+    correctAnswer: question.correctAnswer,
+    difficulty: question.difficulty,
+    topics: question.topics,
+  };
+});
+
+  await prisma.milestone.create({
+    data: {
+      badgeId: easyBadge.id,
+      key: 'easy-foundations',
+      version: 1,
+      ruleType: 'QUESTION_MASTERY_SNAPSHOT',
+      status: 'PUBLISHED',
+      publishedAt,
+      eligibilityStartsAt: publishedAt,
+      questions: {
+        create: milestoneQuestions,
+      },
+    },
   });
 }
 

@@ -54,6 +54,8 @@ model UserProfile {
     status             String   @default("active")
     createdAt          DateTime @default(now())
     updatedAt          DateTime @updatedAt
+
+    userBadges UserBadge[]
 }
 
 model UserQuestionMastery {
@@ -69,4 +71,91 @@ model UserQuestionMastery {
     @@unique([userId, questionId])
     @@index([userId, bestCorrect])
     @@index([questionId, bestCorrect])
+}
+
+enum BadgeCategory {
+    MASTERY
+    PROGRESSION
+    CONSISTENCY
+    TOPIC
+    META
+}
+
+enum MilestoneRuleType {
+    QUESTION_MASTERY_SNAPSHOT
+}
+
+enum MilestoneStatus {
+    DRAFT
+    PUBLISHED
+    RETIRED
+}
+
+model Badge {
+    id          String        @id @default(cuid())
+    displayName String
+    description String
+    category    BadgeCategory @default(MASTERY)
+    iconUrl     String?
+    isActive    Boolean       @default(true)
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+
+    milestones Milestone[]
+    userBadges UserBadge[]
+}
+
+model Milestone {
+    id                  String            @id @default(cuid())
+    badgeId             String
+    key                 String
+    version             Int
+    ruleType            MilestoneRuleType @default(QUESTION_MASTERY_SNAPSHOT)
+    status              MilestoneStatus   @default(DRAFT)
+    publishedAt         DateTime?
+    eligibilityStartsAt DateTime?
+    createdAt           DateTime          @default(now())
+    updatedAt           DateTime          @updatedAt
+
+    badge     Badge              @relation(fields: [badgeId], references: [id])
+    questions MilestoneQuestion[]
+    userBadges UserBadge[]
+
+    @@unique([key, version])
+    @@index([status])
+}
+
+model MilestoneQuestion {
+    id          String @id @default(cuid())
+    milestoneId String
+    questionId  String
+
+    // Snapshot fields preserve the published requirement if the question changes.
+    prompt        String
+    options       Json
+    correctAnswer String
+    difficulty    String
+    topics        String[]
+
+    milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+
+    @@unique([milestoneId, questionId])
+    @@index([questionId])
+}
+
+model UserBadge {
+    id          String   @id @default(cuid())
+    userId      String
+    badgeId     String
+    milestoneId String
+    earnedAt    DateTime @default(now())
+    metadata    Json?
+    createdAt   DateTime @default(now())
+
+    badge     Badge     @relation(fields: [badgeId], references: [id])
+    milestone Milestone @relation(fields: [milestoneId], references: [id])
+    user      UserProfile @relation(fields: [userId], references: [id])
+
+    @@unique([userId, milestoneId])
+    @@index([userId])
 }
