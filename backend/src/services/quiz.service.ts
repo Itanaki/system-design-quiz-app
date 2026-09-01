@@ -2,6 +2,7 @@ import type { Prisma } from '@prisma/client';
 import prisma from '../lib/prisma.js';
 import { ApiError } from '../utils/apiError.js';
 import { createQuestionSchema } from '../schemas/quiz.schemas.js';
+import { evaluateMilestonesForUser} from '../services/milestone.service.js';
 
 type QuestionInput = {
   prompt: string;
@@ -293,17 +294,36 @@ export async function submitAttempt(payload: {
       include: { answers: true },
     });
 
-    if (userId) {
-      for (const answer of evaluatedAnswers) {
-        await upsertMastery(tx, userId, answer.questionId, answer.correct, now);
+    let newlyEarnedBadges: Awaited<
+      ReturnType<typeof evaluateMilestonesForUser>
+    > = [];
+
+    if (userId){
+      for (const answer of evaluatedAnswers){
+        await upsertMastery(
+          tx,
+          userId,
+          answer.questionId,
+          answer.correct,
+          now,
+        );
       }
+      
+      newlyEarnedBadges = await evaluateMilestonesForUser(
+        tx,
+        userId,
+        now,
+      );
     }
 
-    return created;
+    return {
+      created,
+      newlyEarnedBadges,
+    };
   });
   
   // build detailed feedback
-  const details = attempt.answers.map((ans) => {
+  const details = attempt.created.answers.map((ans) => {
     const q = qMap.get(ans.questionId);
     return {
       questionId: ans.questionId,
@@ -315,7 +335,7 @@ export async function submitAttempt(payload: {
   });
 
   return {
-    attemptId: attempt.id,
+    attemptId: attempt.created.id,
     score,
     total,
     details,

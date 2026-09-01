@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { attemptSchema } from '../schemas/attempt.schema.js';
 import { getAttemptForUser, getAttemptsForUser, submitAttempt } from '../services/quiz.service.js';
+import { getMilestoneProgress } from '../services/milestone.service.js' 
 
 type AttemptParams = {
   id: string;
@@ -63,5 +64,21 @@ export async function getAttemptDetails(
     res.json(attempt);
   } catch (err) {
     next(err);
+  }
+}
+
+export async function getMilestones(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const milestones = await getMilestoneProgress(req.user!.id);
+
+    res.json({
+      milestones,
+    });
+  } catch (error) {
+    next(error);
   }
 }

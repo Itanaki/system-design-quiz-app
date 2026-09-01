@@ -6,6 +6,8 @@ const router = Router();
 
 router.post('/', optionalAuth, ctrl.postAttempt);
 router.get('/', requireAuth, ctrl.getAttemptHistory);
+router.get('/milestones', requireAuth, ctrl.getMilestones);
 router.get('/:id', requireAuth, ctrl.getAttemptDetails);
+
 
 export default router;
