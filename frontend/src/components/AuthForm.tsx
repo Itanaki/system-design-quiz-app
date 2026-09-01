@@ -63,7 +63,8 @@ export function AuthForm({ isOpen, onClose, session }: AuthFormProps){
                     {error && <div className={styles.error}>{error}</div>}
 
                     <form className={styles.form} onSubmit={handleSubmit}>
-                        <input
+                        {isSignUp && (
+                            <input
                                 className={styles.input}
                                 type="text"
                                 placeholder="Display name"
@@ -72,6 +73,7 @@ export function AuthForm({ isOpen, onClose, session }: AuthFormProps){
                                 maxLength={40}
                                 required
                             />
+                        )}
                         <input
                             className={styles.input}
                             type="email"
