@@ -25,11 +25,14 @@ export function AuthForm({ isOpen, onClose, session }: AuthFormProps){
         setError(null);
 
         const result = isSignUp
-            ? await supabase.auth.signUp({ email, password,
+            ? await supabase.auth.signUp({ 
+                email, 
+                password,
                 options: {
+                    emailRedirectTo: window.location.origin,
                     data: {
-                        display_name: displayName.trim()
-                    }
+                        display_name: displayName.trim(),
+                    },
                 },
              })
             : await signIn(email, password);
