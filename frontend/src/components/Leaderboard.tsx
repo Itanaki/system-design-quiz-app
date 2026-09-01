@@ -5,6 +5,7 @@ import {
   type LeaderboardEntry,
   type LeaderboardScope,
   type MyRank,
+  ApiRequestError,
 } from '../api';
 import { LoadingState, ErrorDisplay } from '.';
 import styles from '../styles/Leaderboard.module.css';
@@ -55,9 +56,13 @@ export function Leaderboard({ currentUserId }: LeaderboardProps) {
         setTotalPages(board.pagination.totalPages);
         setWeightedPointsAvailable(board.weightedPointsAvailable);
         setMyRank(rank);
-      } catch {
+      } catch (error) {
         if (!cancelled) {
-          setError('Failed to load leaderboard');
+          setError(
+            error instanceof ApiRequestError && error.status === 401
+              ? "Please sign in or create an account to view the leaderboard"
+              : "Failed to load leaderboard",
+          );
         }
       } finally {
         if (!cancelled) {

@@ -38,6 +38,16 @@ export type PaginatedQuestions = {
   totalPages: number;
 };
 
+export class ApiRequestError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiRequestError';
+    this.status = status;
+  }
+}
+
 async function getApiError(response: Response) {
   try {
     const body = await response.json();
@@ -358,7 +368,7 @@ export async function getLeaderboard(
   const response = await apiFetch(`${path}?${params.toString()}`);
 
   if (!response.ok) {
-    throw new Error(await getApiError(response));
+    throw new ApiRequestError(await getApiError(response), response.status);
   }
 
   return response.json();
