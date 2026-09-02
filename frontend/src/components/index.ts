@@ -7,3 +7,4 @@ export { AdminQuestions } from './AdminQuestions';
 export { ProgressHistory } from './ProgressHistory';
 export { AttemptReview } from './AttemptReview';
 export { Leaderboard } from './Leaderboard';
+export { Badges } from './Badges';

@@ -9,6 +9,7 @@ import {
   ProgressHistory,
   AttemptReview,
   Leaderboard,
+  Badges,
 } from './components';
 import {
   type QuizSections,
@@ -42,10 +43,12 @@ function App() {
   answers[currentQuestion.id] ?? null
   : null;
 
-  const [view, setView] = useState<'sections' | 'quiz' | 'result' | 'history' | 'review' | 'admin' | 'leaderboard'>(
+  const [view, setView] = useState<'sections' | 'quiz' | 'result' | 'history' | 'review' | 'admin' | 'leaderboard'| 'badges'>(
   window.location.pathname === '/admin/questions'
     ? 'admin'
-    : 'sections',
+    : window.location.pathname === '/badges'
+      ? 'badges'
+      : 'sections',
 );
 const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
   const isAdmin =
@@ -255,8 +258,7 @@ setResult(attemptResult);
             <AuthHeader/>
             <Leaderboard currentUserId={session?.user?.id} />
           </>
-        )
-        : view === 'review' && session?.user && selectedAttemptId ? (
+        ) : view === 'review' && session?.user && selectedAttemptId ? (
           <>
             <AuthHeader/>
             <AttemptReview
@@ -272,7 +274,14 @@ setResult(attemptResult);
           <AdminQuestions onBack={returnToQuiz} />
         ) : view === 'admin' ? (
           <ErrorDisplay message="Admin access required" />
-        ) : (
+        ) : view === 'badges' && session?.user ? (
+          <>
+            <AuthHeader/>
+            <Badges />
+          </>
+        ) : view === 'badges' ? (
+         <ErrorDisplay message="Sign in to see badges" />
+          ) : (
           <>
             {error && <ErrorDisplay message={error} />}
 
@@ -296,6 +305,11 @@ setResult(attemptResult);
                   >
                     Leaderboard
                   </button>
+                  {session?.user && (
+                    <button onClick={() => setView('badges')} className={styles.historyBtn}>
+                      My Badges
+                    </button>
+                  )}
                 </div>
                 {sections && !sessionQuestions && !result && (
                 <SectionsList

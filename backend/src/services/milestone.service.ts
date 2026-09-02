@@ -35,10 +35,6 @@ export async function evaluateMilestonesForUser(
                     in: milestone.questions.map((question) => question.questionId),
                 },
                 bestCorrect: true,
-                firstCorrectAt: {
-                    gte: milestone.eligibilityStartsAt ?? milestone.publishedAt ?? new Date(0),
-                    lte: completedAt,
-                },
             },
             select:{
                 questionId: true,
@@ -146,18 +142,10 @@ export async function getMilestoneProgress(userId: string) {
     );
 
     return milestones.map((milestone) => {
-        const eligibilityStartsAt = 
-        milestone.eligibilityStartsAt ??
-        milestone.publishedAt ??
-        new Date(0);
-
         const correct = milestone.questions.filter((question) => {
             const record = masterByQuestionId.get(question.questionId);
             
-            return Boolean(
-                record?.firstCorrectAt &&
-                record.firstCorrectAt >= eligibilityStartsAt,
-            );
+            return Boolean(record?.firstCorrectAt);
         }).length;
 
         const required = milestone.questions.length;
