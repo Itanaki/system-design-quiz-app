@@ -149,6 +149,7 @@ model UserBadge {
     badgeId     String
     milestoneId String
     earnedAt    DateTime @default(now())
+    showcased   Boolean  @default(false)
     metadata    Json?
     createdAt   DateTime @default(now())
 
@@ -158,4 +159,5 @@ model UserBadge {
 
     @@unique([userId, milestoneId])
     @@index([userId])
+    @@index([userId, showcased])
 }
