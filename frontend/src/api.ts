@@ -208,6 +208,14 @@ export type AttemptResult = {
   completedAt?: string | null;
   difficulty?: string | null;
   topic?: string | null;
+   newlyEarnedBadges?: Array<{
+    badgeId: string;
+    milestoneId: string;
+    key: string;
+    version: number;
+    displayName: string;
+    earnedAt: string;
+  }>;
   details: Array<{
     questionId: string;
     selected: string;

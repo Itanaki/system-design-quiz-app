@@ -339,6 +339,7 @@ export async function submitAttempt(payload: {
     score,
     total,
     details,
+    newlyEarnedBadges: attempt.newlyEarnedBadges,
   };
 }
 
