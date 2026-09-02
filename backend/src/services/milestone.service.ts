@@ -57,15 +57,21 @@ export async function evaluateMilestonesForUser(
             continue;
         }
 
-        const award = await tx.userBadge.upsert({
+        const existingAward = await tx.userBadge.findUnique({
             where: {
                 userId_milestoneId: {
                     userId,
                     milestoneId: milestone.id,
-                },
-            },
-            update: {},
-            create: {
+                }
+            }
+        });
+
+        if (existingAward){
+            continue;
+        }
+
+        const award = await tx.userBadge.create({
+            data:{
                 userId,
                 badgeId: milestone.badgeId,
                 milestoneId: milestone.id,
@@ -76,7 +82,6 @@ export async function evaluateMilestonesForUser(
                 milestone: true,
             },
         });
-
         newlyEarned.push({
             badgeId: award.badgeId,
             milestoneId: award.milestoneId,

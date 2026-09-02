@@ -38,6 +38,35 @@ export type PaginatedQuestions = {
   totalPages: number;
 };
 
+export type Badge = {
+  id: string;
+  displayName: string;
+  description: string;
+  category: string;
+  iconUrl: string | null;
+};
+
+export type UserBadge = {
+  milestoneId: string;
+  key: string;
+  version: number;
+  earnedAt: string;
+  showcased: boolean;
+  badge: Badge;
+};
+
+export type MilestoneProgress = {
+  milestoneId: string;
+  key: string;
+  version: number;
+  status: 'locked' | 'in_progress' | 'eligible' | 'earned' | 'retired';
+  required: number;
+  correct: number;
+  percentage: number;
+  earnedAt: string | null;
+  badge: Badge;
+};
+
 export class ApiRequestError extends Error {
   status: number;
 
@@ -393,4 +422,51 @@ export async function getMyLeaderboardRank(
   }
 
   return response.json();
+}
+
+export async function getMilestoneProgress(): Promise<MilestoneProgress[]> {
+  const response = await apiFetch('/api/attempts/milestones');
+
+  if (!response.ok) {
+    throw new ApiRequestError(
+      await getApiError(response),
+      response.status,
+    );
+  }
+
+  const body = await response.json();
+  return body.milestones;
+}
+
+export async function getMyBadges(): Promise<UserBadge[]> {
+  const response = await apiFetch('/api/profile/badges');
+
+  if (!response.ok) {
+    throw new ApiRequestError(
+      await getApiError(response),
+      response.status,
+    );
+  }
+
+  const body = await response.json();
+  return body.badges;
+}
+
+export async function updateShowcasedBadges(
+  milestoneIds: string[],
+): Promise<UserBadge[]> {
+  const response = await apiFetch('/api/profile/badges/showcase', {
+    method: 'PUT',
+    body: JSON.stringify({ milestoneIds }),
+  });
+
+  if (!response.ok) {
+    throw new ApiRequestError(
+      await getApiError(response),
+      response.status,
+    );
+  }
+
+  const body = await response.json();
+  return body.badges;
 }

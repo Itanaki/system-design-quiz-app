@@ -21,6 +21,35 @@ type QuestionFilters = {
   topic?: string;
 };
 
+export type NewlyEarnedBadge = {
+  badgeId: string;
+  milestoneId: string;
+  key: string;
+  version: number;
+  displayName: string;
+  earnedAt: string;
+};
+
+export type AttemptResult = {
+  attemptId: string;
+  score: number;
+  total: number;
+  percentage?: number;
+  completed?: boolean;
+  createdAt?: string;
+  completedAt?: string | null;
+  difficulty?: string | null;
+  topic?: string | null;
+  newlyEarnedBadges?: NewlyEarnedBadge[];
+  details: Array<{
+    questionId: string;
+    selected: string;
+    correct: boolean;
+    explanation: string | null;
+    correctAnswer: string | null;
+  }>;
+};
+
 function serializeAdminQuestion(question: {
   id: string;
   prompt: string;

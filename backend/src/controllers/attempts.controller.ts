@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { attemptSchema } from '../schemas/attempt.schema.js';
 import { getAttemptForUser, getAttemptsForUser, submitAttempt } from '../services/quiz.service.js';
 import { getMilestoneProgress } from '../services/milestone.service.js' 
+import { z } from 'zod';
 
 type AttemptParams = {
   id: string;
@@ -82,3 +83,7 @@ export async function getMilestones(
     next(error);
   }
 }
+
+export const showcaseBadgesSchema = z.object({
+  milestoneIds: z.array(z.string().min(1)).max(3),
+});
