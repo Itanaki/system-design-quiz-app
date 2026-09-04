@@ -4,6 +4,7 @@ import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
 
+router.get('/:userId/showcase', requireAuth, ctrl.getPublicShowcaseController);
 router.get('/badges', requireAuth, ctrl.getMyBadges);
 router.put('/badges/showcase', requireAuth, ctrl.putShowcasedBadges);
 

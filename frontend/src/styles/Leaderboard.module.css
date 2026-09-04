@@ -126,11 +126,64 @@
 }
 
 .name {
-  flex: 1;
-  min-width: 120px;
   font-family: var(--mono);
   color: var(--text-primary);
   font-weight: 600;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: help;
+  text-align: left;
+}
+
+.profile {
+  position: relative;
+  flex: 1;
+  min-width: 120px;
+}
+
+.name:hover,
+.name:focus-visible {
+  color: var(--accent-teal);
+  text-decoration: underline;
+}
+
+.showcase {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + 10px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(280px, calc(100vw - 48px));
+  padding: 12px;
+  border: 1px solid var(--accent-teal);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  box-shadow: 0 8px 24px var(--glow-teal-intense);
+  color: var(--text-primary);
+  font-family: var(--mono);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.showcaseBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.showcaseBadge img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.noShowcase {
+  color: var(--text-secondary);
+  opacity: 0.8;
 }
 
 .percentage {

@@ -50,6 +50,40 @@ export async function getUserBadges(userId: string) {
   });
 }
 
+export async function getPublicShowcase(userId: string) {
+  const profile = await prisma.userProfile.findFirst({
+    where: {
+      id: userId,
+      status: 'active',
+      leaderboardOptOut: false,
+    },
+    select: {
+      displayName: true,
+      userBadges: {
+        where: {
+          showcased: true,
+        },
+        orderBy: {
+          earnedAt: 'desc',
+        },
+        select: {
+          milestoneId: true,
+          earnedAt: true,
+          badge: true,
+          milestone: {
+            select: {
+              key: true,
+              version: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return profile;
+}
+
 
 export async function updateShowcasedBadges(
   userId: string,

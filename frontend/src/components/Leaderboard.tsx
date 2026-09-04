@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import {
   getLeaderboard,
   getMyLeaderboardRank,
+  getPublicShowcase,
   type LeaderboardEntry,
   type LeaderboardScope,
   type MyRank,
+  type PublicShowcase,
   ApiRequestError,
 } from '../api';
 import { LoadingState, ErrorDisplay } from '.';
@@ -32,6 +34,17 @@ export function Leaderboard({ currentUserId }: LeaderboardProps) {
   const [myRank, setMyRank] = useState<MyRank | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showcases, setShowcases] = useState<Record<string, PublicShowcase | null>>({});
+  const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
+
+  function loadShowcase(userId: string) {
+    if (userId in showcases) return;
+
+    setShowcases((current) => ({ ...current, [userId]: null }));
+    getPublicShowcase(userId)
+      .then((showcase) => setShowcases((current) => ({ ...current, [userId]: showcase })))
+      .catch(() => setShowcases((current) => ({ ...current, [userId]: { displayName: '', userBadges: [] } })));
+  }
 
   useEffect(() => {
     setPage(1);
@@ -122,7 +135,38 @@ export function Leaderboard({ currentUserId }: LeaderboardProps) {
                 className={`${styles.row} ${entry.userId === currentUserId ? styles.rowActive : ''}`}
               >
                 <span className={styles.rank}>#{entry.rank}</span>
-                <span className={styles.name}>{entry.displayName}</span>
+                <span
+                  className={styles.profile}
+                  onMouseEnter={() => {
+                    setActiveProfileId(entry.userId);
+                    loadShowcase(entry.userId);
+                  }}
+                  onMouseLeave={() => setActiveProfileId(null)}
+                  onFocus={() => {
+                    setActiveProfileId(entry.userId);
+                    loadShowcase(entry.userId);
+                  }}
+                  onBlur={() => setActiveProfileId(null)}
+                >
+                  <button type="button" className={styles.name} aria-label={`View ${entry.displayName}'s showcased badges`}>
+                    {entry.displayName}
+                  </button>
+                  {activeProfileId === entry.userId && showcases[entry.userId] && (
+                    <span className={styles.showcase} role="tooltip">
+                      <strong>Showcased badges</strong>
+                      {showcases[entry.userId].userBadges.length > 0 ? (
+                        showcases[entry.userId].userBadges.map((userBadge) => (
+                          <span key={userBadge.milestoneId} className={styles.showcaseBadge}>
+                            {userBadge.badge.iconUrl && <img src={userBadge.badge.iconUrl} alt="" />}
+                            <span>{userBadge.badge.displayName}</span>
+                          </span>
+                        ))
+                      ) : (
+                        <span className={styles.noShowcase}>No badges showcased</span>
+                      )}
+                    </span>
+                  )}
+                </span>
                 <span className={styles.percentage}>
                   {entry.masteryPercentage.toFixed(2)}%
                 </span>

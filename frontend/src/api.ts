@@ -1,5 +1,7 @@
 import { supabase } from './lib/supabase';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.DEV
+  ? 'http://localhost:4000'
+  : (import.meta.env.VITE_API_URL || '');
 
 export type AdminQuestion = {
   id: string;
@@ -53,6 +55,13 @@ export type UserBadge = {
   earnedAt: string;
   showcased: boolean;
   badge: Badge;
+};
+
+export type PublicShowcase = {
+  displayName: string;
+  userBadges: Array<Pick<UserBadge, 'milestoneId' | 'earnedAt' | 'badge'> & {
+    milestone: Pick<UserBadge, 'key' | 'version'>;
+  }>;
 };
 
 export type MilestoneProgress = {
@@ -450,6 +459,16 @@ export async function getMyBadges(): Promise<UserBadge[]> {
 
   const body = await response.json();
   return body.badges;
+}
+
+export async function getPublicShowcase(userId: string): Promise<PublicShowcase> {
+  const response = await apiFetch(`/api/profile/${encodeURIComponent(userId)}/showcase`);
+
+  if (!response.ok) {
+    throw new ApiRequestError(await getApiError(response), response.status);
+  }
+
+  return response.json();
 }
 
 export async function updateShowcasedBadges(
