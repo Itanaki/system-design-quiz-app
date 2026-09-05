@@ -93,8 +93,20 @@ export function Badges(){
                 );
 
                 const isShowcased = selected.includes(milestone.milestoneId);
+                const iconUrl = milestone.badge.iconUrl ?? (
+                    milestone.key === 'easy-foundations'
+                        ? '/badges/easy-foundations.svg'
+                        : null
+                );
                 return(
                     <article key={milestone.milestoneId} className={styles.card}>
+                        {iconUrl && (
+                            <img
+                                className={styles.icon}
+                                src={iconUrl}
+                                alt=""
+                            />
+                        )}
                         <h3>{milestone.badge.displayName}</h3>
                         <p>{milestone.badge.description}</p>
                         <p>

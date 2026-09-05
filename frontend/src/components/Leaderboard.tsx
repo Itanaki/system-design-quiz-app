@@ -157,7 +157,16 @@ export function Leaderboard({ currentUserId }: LeaderboardProps) {
                       {(showcases[entry.userId]?.userBadges ?? []).length > 0 ? (
                         (showcases[entry.userId]?.userBadges ?? []).map((userBadge) => (
                           <span key={userBadge.milestoneId} className={styles.showcaseBadge}>
-                            {userBadge.badge.iconUrl && <img src={userBadge.badge.iconUrl} alt="" />}
+                            {(userBadge.badge.iconUrl ?? (
+                              userBadge.milestone.key === 'easy-foundations'
+                                ? '/badges/easy-foundations.svg'
+                                : null
+                            )) && (
+                              <img
+                                src={userBadge.badge.iconUrl ?? '/badges/easy-foundations.svg'}
+                                alt=""
+                              />
+                            )}
                             <span>{userBadge.badge.displayName}</span>
                           </span>
                         ))

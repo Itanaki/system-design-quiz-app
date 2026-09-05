@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Easy Foundations badge</title>
+  <desc id="desc">A teal shield with a white foundation block and star</desc>
+  <defs>
+    <linearGradient id="shield" x1="18" y1="12" x2="110" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <path d="M64 7 111 24v35c0 29-19 49-47 62C36 108 17 88 17 59V24L64 7Z" fill="#071a1d" stroke="#5eead4" stroke-width="4"/>
+  <path d="M64 17 101 30v29c0 23-14 39-37 51C41 98 27 82 27 59V30l37-13Z" fill="url(#shield)"/>
+  <path d="m64 28 5.7 11.6 12.8 1.9-9.3 9.1 2.2 12.8L64 57.3l-11.4 6 2.2-12.8-9.3-9.1 12.8-1.9L64 28Z" fill="#f8fafc"/>
+  <path d="M39 72h50v9H39zM45 84h38v9H45z" fill="#f8fafc"/>
+</svg>

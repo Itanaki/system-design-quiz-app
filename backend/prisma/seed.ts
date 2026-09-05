@@ -285,6 +285,7 @@ const easyBadge = await prisma.badge.upsert({
     displayName: 'Easy Foundations',
     description: 'Master every question in the Easy Foundations milestone.',
     category: 'MASTERY',
+    iconUrl: '/badges/easy-foundations.svg',
     isActive: true,
   },
   create: {
@@ -292,6 +293,7 @@ const easyBadge = await prisma.badge.upsert({
     displayName: 'Easy Foundations',
     description: 'Master every question in the Easy Foundations milestone.',
     category: 'MASTERY',
+    iconUrl: '/badges/easy-foundations.svg',
     isActive: true,
   },
 });
